@@ -134,13 +134,12 @@ class Play extends Phaser.Scene{
     }
 
     log(){
-        //this.scene.start('homeScene');
-        this.scene.restart();
+        this.scene.start('homeScene');
     }
 
     checkGameOver(){
         if(this.main.y >= 900){
-            this.scene.restart();
+            this.scene.start('homeScene');
         }
     }
 

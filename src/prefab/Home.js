@@ -31,7 +31,19 @@ class Home extends Phaser.Scene{
     }
 
     create(){
-        
+        let titleConfig = {
+            fontFamily: 'Noteworthy',
+            fontSize:'30px',
+            backgroundColor:'#FFFFFF',
+            color: '#000000',
+            align: 'left',
+            padding:{
+            top: 0,
+            bottom: 0,
+            left: 130
+        },
+            fixedWidth: 480
+        };
         this.anims.create({
             key: 'move',
             frames: this.anims.generateFrameNumbers('walk', {start: 0, end: 3, first: 0}),
@@ -41,8 +53,14 @@ class Home extends Phaser.Scene{
 
         this.main = this.physics.add.sprite(200, 400, 'walk');
         this.main.anims.play('move');
+        this.hint = this.add.text(300, 300, 'Press \'R\' to go back', titleConfig);
+        this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    }
 
-        this.cam = this.cameras.main;
+    update(){
+        if(Phaser.Input.Keyboard.JustDown(this.back)){
+            this.scene.start('playScene');
+        }
     }
 
 }
