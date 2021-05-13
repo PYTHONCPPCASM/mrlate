@@ -5,32 +5,17 @@ class Play extends Phaser.Scene{
 
     preload(){
         
-        this.load.image('late', './assets/walkingSheet.png');
-        this.load.image('background', './assets/scene1.png');
-        this.load.image('ground', './assets/ground.png');
-        this.load.image('gold', './assets/gold.png');
-        this.load.image('port', './assets/port.png');
-
-        this.load.spritesheet('walk', './assets/walkingSheet.png',{
-            frameWidth: 108,
-            frameHeight: 192,
-            startFrame: 0,
-            endFrame: 3,
-            repeat: -1
-        });
-
-        this.load.spritesheet('count', './assets/count.png' ,{
-            frameWidth: 48,
-            frameHeight: 48,
-            startFrame: 0,
-            endFrame: 3,
-            repeat: -1
-        });
+        //load visual assets
+        this.loadVisualAssets();
+        //create animation
+        this.createAnimation();
+        //load sound assets
+        this.loadSFX();
 
     }
 
     create(){
-
+        this.sound.play('bgm');
         this.anims.create({
             key: 'move',
             frames: this.anims.generateFrameNumbers('walk', { start: 0, end: 3, first: 0}),
@@ -131,6 +116,7 @@ class Play extends Phaser.Scene{
 
     collectStar(player,star){
         star.disableBody(true, true);
+        this.sound.play('ting');
     }
 
     log(){
@@ -141,6 +127,39 @@ class Play extends Phaser.Scene{
         if(this.main.y >= 900){
             this.scene.start('homeScene');
         }
+    }
+
+    loadVisualAssets(){
+        this.load.image('late', './assets/walkingSheet.png');
+        this.load.image('background', './assets/scene1.png');
+        this.load.image('ground', './assets/ground.png');
+        this.load.image('gold', './assets/gold.png');
+        this.load.image('port', './assets/port.png');
+    }
+
+    //please load animations here
+    createAnimation(){
+        this.load.spritesheet('walk', './assets/walkingSheet.png',{
+            frameWidth: 108,
+            frameHeight: 192,
+            startFrame: 0,
+            endFrame: 3,
+            repeat: -1
+        });
+
+        this.load.spritesheet('count', './assets/count.png' ,{
+            frameWidth: 48,
+            frameHeight: 48,
+            startFrame: 0,
+            endFrame: 3,
+            repeat: -1
+        });
+    }
+
+    loadSFX(){
+        this.load.audio('ting', './assets/coinpickup.wav');
+        this.load.audio('bgm', './assets/backgroundmusic.wav');
+        this.load.audio('footstep', './assets/footstep.wav');
     }
 
 }

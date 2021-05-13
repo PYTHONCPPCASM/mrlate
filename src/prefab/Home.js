@@ -31,6 +31,7 @@ class Home extends Phaser.Scene{
     }
 
     create(){
+        
         let titleConfig = {
             fontFamily: 'Noteworthy',
             fontSize:'30px',
@@ -44,6 +45,7 @@ class Home extends Phaser.Scene{
         },
             fixedWidth: 480
         };
+
         this.anims.create({
             key: 'move',
             frames: this.anims.generateFrameNumbers('walk', {start: 0, end: 3, first: 0}),
