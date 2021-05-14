@@ -4,7 +4,7 @@ class Home extends Phaser.Scene{
     }
 
     preload(){
-        
+        this.scene.pause('playScene');
         this.load.image('late', './assets/walkingSheet.png');
         this.load.image('background', './assets/scene1.png');
         this.load.image('ground', './assets/ground.png');
@@ -31,10 +31,9 @@ class Home extends Phaser.Scene{
     }
 
     create(){
-        
         let titleConfig = {
             fontFamily: 'Noteworthy',
-            fontSize:'30px',
+            fontSize:'50px',
             backgroundColor:'#FFFFFF',
             color: '#000000',
             align: 'left',
@@ -43,7 +42,7 @@ class Home extends Phaser.Scene{
             bottom: 0,
             left: 130
         },
-            fixedWidth: 480
+            fixedWidth: 773
         };
 
         this.anims.create({
@@ -55,8 +54,11 @@ class Home extends Phaser.Scene{
 
         this.main = this.physics.add.sprite(200, 400, 'walk');
         this.main.anims.play('move');
+        this.add.text(300, 200, 'You have reached home', titleConfig);
         this.hint = this.add.text(300, 300, 'Press \'R\' to go back', titleConfig);
+        
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        console.log(warped);
     }
 
     update(){

@@ -1,7 +1,7 @@
 let config = {
     type: Phaser.AUTO,
-    width:1920,
-    height: 1080,
+    width: 1080,
+    height: 1546,
     physics: {
         default: 'arcade',
         arcade: {
@@ -9,7 +9,7 @@ let config = {
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [Play, Home]
+    scene: [ System, Play, Home, GameOver]
 };
 
 let game = new Phaser.Game(config);
@@ -18,3 +18,5 @@ let borderX = game.config.width;
 let borderY = game.config.height;
 
 let keyLEFT, keyRIGHT, keyUP, keyDOWN;
+
+let warped = false;

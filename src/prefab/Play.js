@@ -1,4 +1,5 @@
 class Play extends Phaser.Scene{
+
     constructor(){
         super('playScene');
     }
@@ -15,7 +16,9 @@ class Play extends Phaser.Scene{
     }
 
     create(){
-        this.sound.play('bgm');
+        
+        this.playBGM();
+       
         this.anims.create({
             key: 'move',
             frames: this.anims.generateFrameNumbers('walk', { start: 0, end: 3, first: 0}),
@@ -31,23 +34,15 @@ class Play extends Phaser.Scene{
         });
 
         //add coins
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-
-        this.add.image(960,540, 'background').setOrigin(0.5, 0.5);
         
+        //bindKeys
+        this.bindKeys();
         this.addObject();
+
         this.main.setBounce(0);
         this.main.setCollideWorldBounds(true);
 
         this.main.body.setGravityY(700);
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.physics.add.overlap(this.main, this.port, this.log, null, this);
-     
-        this.add.text(200, 200, 'press K');
 
     }
 
@@ -55,9 +50,22 @@ class Play extends Phaser.Scene{
 
         this.controlMain();
         this.checkGameOver();
+        this.collisionManagement();
 
+    }
+
+    bindKeys(){
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+    }
+
+    collisionManagement(){
         this.physics.add.overlap(this.main, this.stars, this.collectStar, null, this);
-        
+        this.physics.add.overlap(this.main, this.port, this.warp, null, this);
     }
 
     controlMain(){
@@ -74,8 +82,10 @@ class Play extends Phaser.Scene{
         }
 
         if(this.cursors.up.isDown && this.main.body.touching.down){
-            this.main.setVelocityY(-900);   
+            this.main.setVelocityY(-900);
+            this.sound.play('jump');
         }
+
         if(this.cursors.down.isDown){
             this.main.setVelocityY(1000);
         }
@@ -84,17 +94,20 @@ class Play extends Phaser.Scene{
 
     addObject(){
 
-        this.port = this.physics.add.sprite(500, 100, 'port');
-        this.main = this.physics.add.sprite(300, 300, 'walk');
-        this.groundGroup = this.physics.add.staticGroup();
+        this.add.image(540,773, 'wall').setOrigin(0.5, 0.5);
         
+        this.port = this.physics.add.sprite(200, 100, 'port');
+        this.main = this.physics.add.sprite(300, 300, 'walk');
+
+        this.groundGroup = this.physics.add.staticGroup();
+
         let randomHorizontal = Phaser.Math.Between(200, 600);
         let randomHeight = Phaser.Math.Between(400, 1000);
 
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         this.groundGroup.create(randomHorizontal, 1000, 'ground').setScale(3.0).refreshBody();
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
-        
+
         this.stars = this.physics.add.group({
             key: 'gold',
             repeat: 4,
@@ -119,13 +132,16 @@ class Play extends Phaser.Scene{
         this.sound.play('ting');
     }
 
-    log(){
+    warp(){
         this.scene.start('homeScene');
+        this.bgm.stop();
+        this.main.x -= + (this.port.x);
     }
 
     checkGameOver(){
         if(this.main.y >= 900){
-            this.scene.start('homeScene');
+            this.bgm.stop();
+            this.scene.start('GameOver');
         }
     }
 
@@ -135,6 +151,8 @@ class Play extends Phaser.Scene{
         this.load.image('ground', './assets/ground.png');
         this.load.image('gold', './assets/gold.png');
         this.load.image('port', './assets/port.png');
+        this.load.image('wall', './assets/wall.png');
+        this.load.image('wallWindowed', './assets/wallWindowed.png');
     }
 
     //please load animations here
@@ -160,6 +178,21 @@ class Play extends Phaser.Scene{
         this.load.audio('ting', './assets/coinpickup.wav');
         this.load.audio('bgm', './assets/backgroundmusic.wav');
         this.load.audio('footstep', './assets/footstep.wav');
+        this.load.audio('jump', './assets/jump.wav');
+    }
+
+    playBGM(){
+        this.bgm = this.sound.add('bgm');
+        let loopConfig = {
+            mute:false,
+            volume:1,
+            rate:1,
+            detune:0,
+            seek:0,
+            loop:true,
+            delay:0
+        };
+        this.bgm.play(loopConfig);
     }
 
 }

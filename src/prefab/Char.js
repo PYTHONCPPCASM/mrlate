@@ -30,9 +30,4 @@ class Char extends Phaser.Physics.Arcade.Sprite{
         }
     }
 
-
-    moving(){
-
-    }
-
 }
