@@ -64,8 +64,10 @@ class Play extends Phaser.Scene{
     }
 
     collisionManagement(){
-        this.physics.add.overlap(this.main, this.stars, this.collectStar, null, this);
+        this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
         this.physics.add.collider(this.main, this.port, this.warp, null, this);
+        this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
+        this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
     }
 
     controlMain(){
@@ -105,31 +107,65 @@ class Play extends Phaser.Scene{
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         
         this.main = this.physics.add.sprite(this.groundPlatform.x, randomHeight + this.groundPlatform.height, 'walk');
-        
+
         this.port = this.physics.add.sprite(this.groundPlatform.x + this.groundPlatform.width, this.groundPlatform.y - this.groundPlatform.height - 100, 'port').setScale(3.0).refreshBody();
 
-        this.stars = this.physics.add.group({
+        //add book for picking up
+        this.books = this.physics.add.group({
+            key: 'book',
+            repeat: 4,
+            setXY: { x: 100, y: 200, stepX : 40, stepY: 80}
+        });
+        this.books.children.iterate(function (child) {
+            child.setScale(3.0).refreshBody();
+        });
+
+        //add gold for picking up
+        this.gold = this.physics.add.group({
             key: 'gold',
             repeat: 4,
             setXY: { x: this.groundPlatform.x - this.groundPlatform.width , y: -100, stepX: 100, stepY: 80 }
         });
-
-        this.stars.children.iterate(function (child) {
+        this.gold.children.iterate(function (child) {      //set the physics attribute
             child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
             child.setScale(3.0).refreshBody();
             child.setGravityY(300);
         });
+        //add heart for picking up
+        this.hearts = this.physics.add.group({
+            key : 'heart',
+            repeat : 3,
+            setXY : {x : this.groundPlatform.x - 30, y : -300, stepX : 50, stepY : 35}
+        });
+        this.hearts.children.iterate(function (child) {
+            child.setBounceY(0.3);
+            child.setScale(3.0).refreshBody();
+            child.setGravityY(300);
+        })
+
 
         this.physics.add.collider(this.main, this.groundGroup);   //main collide
-        this.physics.add.collider(this.stars, this.groundGroup);  //group collide
+        this.physics.add.collider(this.gold, this.groundGroup);  //group collide
         this.physics.add.collider(this.port, this.groundGroup);
+        this.physics.add.collider(this.books, this.groundGroup);
+        this.physics.add.collider(this.hearts, this.groundGroup);
         
         this.port.setGravityY(300);
 
     }
 
-    collectStar(player,star){
-        star.disableBody(true, true);
+    collectStar(player,gold){
+        gold.disableBody(true, true);
+        this.sound.play('ting');
+    }
+
+    collectBooks(player, book){
+        book.disableBody(true, true);
+        this.sound.play('ting');
+    }
+
+    collectHearts(player, heart){
+        heart.disableBody(true, true);
         this.sound.play('ting');
     }
 
@@ -156,6 +192,8 @@ class Play extends Phaser.Scene{
         this.load.image('port', './assets/port.png');
         this.load.image('wall', './assets/wall.png');
         this.load.image('wallWindowed', './assets/wallWindowed.png');
+        this.load.image('book', './assets/book.png');
+        this.load.image('heart', './assets/heart.png');
     }
 
     //please load animations here

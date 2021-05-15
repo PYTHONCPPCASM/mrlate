@@ -29,7 +29,7 @@ class System extends Phaser.Scene{
         // this.add.text(100, 100, 'Wait for 2s and the scene will change', titleConfig);
         this.add.text(100, 200, 'Press A to go to playScene', titleConfig);
         this.add.text(100, 300, 'Press B to go to homeScene', titleConfig);
-        //this.scene.start('homeScene');
+
     }
 
     update(){
