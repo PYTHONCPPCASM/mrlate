@@ -65,7 +65,7 @@ class Play extends Phaser.Scene{
 
     collisionManagement(){
         this.physics.add.overlap(this.main, this.stars, this.collectStar, null, this);
-        this.physics.add.overlap(this.main, this.port, this.warp, null, this);
+        this.physics.add.collider(this.main, this.port, this.warp, null, this);
     }
 
     controlMain(){
@@ -95,23 +95,23 @@ class Play extends Phaser.Scene{
     addObject(){
 
         this.add.image(540,773, 'wall').setOrigin(0.5, 0.5);
-        
-        this.port = this.physics.add.sprite(200, 100, 'port');
-        this.main = this.physics.add.sprite(300, 300, 'walk');
+
+        let randomHorizontal = Phaser.Math.Between(200, 700);
+        let randomHeight = Phaser.Math.Between(540, 600);
 
         this.groundGroup = this.physics.add.staticGroup();
-
-        let randomHorizontal = Phaser.Math.Between(200, 600);
-        let randomHeight = Phaser.Math.Between(400, 1000);
-
+        this.groundPlatform = this.groundGroup.create(540, 973, 'ground').setScale(3.0).refreshBody();
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
-        this.groundGroup.create(randomHorizontal, 1000, 'ground').setScale(3.0).refreshBody();
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
+        
+        this.main = this.physics.add.sprite(this.groundPlatform.x, randomHeight + this.groundPlatform.height, 'walk');
+        
+        this.port = this.physics.add.sprite(this.groundPlatform.x + this.groundPlatform.width, this.groundPlatform.y - this.groundPlatform.height - 100, 'port').setScale(3.0).refreshBody();
 
         this.stars = this.physics.add.group({
             key: 'gold',
             repeat: 4,
-            setXY: { x: 100, y: -100, stepX: 100, stepY: 80 }
+            setXY: { x: this.groundPlatform.x - this.groundPlatform.width , y: -100, stepX: 100, stepY: 80 }
         });
 
         this.stars.children.iterate(function (child) {
@@ -123,6 +123,7 @@ class Play extends Phaser.Scene{
         this.physics.add.collider(this.main, this.groundGroup);   //main collide
         this.physics.add.collider(this.stars, this.groundGroup);  //group collide
         this.physics.add.collider(this.port, this.groundGroup);
+        
         this.port.setGravityY(300);
 
     }
@@ -135,12 +136,14 @@ class Play extends Phaser.Scene{
     warp(){
         this.scene.start('homeScene');
         this.bgm.stop();
+        this.sound.play('fall');
         this.main.x -= + (this.port.x);
     }
 
     checkGameOver(){
         if(this.main.y >= 900){
             this.bgm.stop();
+            this.sound.play('fall');
             this.scene.start('GameOver');
         }
     }
@@ -179,6 +182,7 @@ class Play extends Phaser.Scene{
         this.load.audio('bgm', './assets/backgroundmusic.wav');
         this.load.audio('footstep', './assets/footstep.wav');
         this.load.audio('jump', './assets/jump.wav');
+        this.load.audio('fall', './assets/fall.wav');
     }
 
     playBGM(){

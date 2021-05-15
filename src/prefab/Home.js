@@ -4,13 +4,7 @@ class Home extends Phaser.Scene{
     }
 
     preload(){
-        this.scene.pause('playScene');
-        this.load.image('late', './assets/walkingSheet.png');
-        this.load.image('background', './assets/scene1.png');
-        this.load.image('ground', './assets/ground.png');
-        this.load.image('gold', './assets/gold.png');
-        this.load.image('port', './assets/port.png');
-
+        
         //make a sprite sheet call walk
         this.load.spritesheet('walk', './assets/walkingSheet.png',{
             frameWidth: 108,
@@ -56,9 +50,7 @@ class Home extends Phaser.Scene{
         this.main.anims.play('move');
         this.add.text(300, 200, 'You have reached home', titleConfig);
         this.hint = this.add.text(300, 300, 'Press \'R\' to go back', titleConfig);
-        
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        console.log(warped);
     }
 
     update(){
