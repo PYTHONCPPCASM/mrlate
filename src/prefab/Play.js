@@ -64,7 +64,7 @@ class Play extends Phaser.Scene{
     }
 
     collisionManagement(){
-        
+
         this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
         this.physics.add.collider(this.main, this.port, this.warp, null, this);
         this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
@@ -105,14 +105,16 @@ class Play extends Phaser.Scene{
         let randomHeight = Phaser.Math.Between(540, 600);
 
         this.groundGroup = this.physics.add.staticGroup();
+
         this.groundPlatform = this.groundGroup.create(540, 973, 'ground').setScale(3.0).refreshBody();
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         
+        //adding the main character
         this.main = this.physics.add.sprite(this.groundPlatform.x, randomHeight + this.groundPlatform.height, 'walk');
 
         this.port = this.physics.add.sprite(this.groundPlatform.x + this.groundPlatform.width, this.groundPlatform.y - this.groundPlatform.height - 100, 'port').setScale(3.0).refreshBody();
-
+        
         //add book for picking up
         this.books = this.physics.add.group({
             key: 'book',
