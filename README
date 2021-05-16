@@ -2,4 +2,6 @@ Basic Scene structure: You have defined Scenes (yes, plural) and some means to s
 
 The platform will randomly generated
 
-When collecting coins, it will plays the sound
+When collecting coins, such action will play sound
+
+The orange rectangle bracket can warp the play to the homeScene.

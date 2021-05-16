@@ -55,12 +55,14 @@ class Play extends Phaser.Scene{
     }
 
     bindKeys(){
+
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.cursors = this.input.keyboard.createCursorKeys();
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+ 
     }
 
     collisionManagement(){
@@ -69,7 +71,7 @@ class Play extends Phaser.Scene{
         this.physics.add.collider(this.main, this.port, this.warp, null, this);
         this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
         this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
-        this.physics.add.collider(this.gold, this.groundGroup, this.hittingGround, this.gold, this);
+        this.physics.add.collider(this.gold, this.groundPlatform, this.hittingGround, null, this);
 
     }
 
@@ -106,7 +108,8 @@ class Play extends Phaser.Scene{
 
         this.groundGroup = this.physics.add.staticGroup();
 
-        this.groundPlatform = this.groundGroup.create(540, 973, 'ground').setScale(3.0).refreshBody();
+        //this.groundPlatform = this.groundGroup.create(540, 973, 'ground').setScale(3.0).refreshBody();
+        this.groundPlatform = this.groundGroup.create(540, 993, 'ground').setScale(3.0).refreshBody();
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
         
@@ -153,6 +156,8 @@ class Play extends Phaser.Scene{
         this.physics.add.collider(this.books, this.groundGroup);
         this.physics.add.collider(this.hearts, this.groundGroup);
         this.physics.add.collider(this.gold, this.groundGroup);  //group collide
+        
+        this.physics.add.collider(this.main, this.groundPlatform);
 
         this.port.setGravityY(300);
     }
@@ -160,6 +165,7 @@ class Play extends Phaser.Scene{
     collectStar(player,gold){
         gold.disableBody(true, true);
         this.sound.play('ding');
+        console.log('collect gold');
     }
 
     collectBooks(player, book){
