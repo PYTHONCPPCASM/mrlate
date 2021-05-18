@@ -1,5 +1,6 @@
 let config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
+    pixelArt:true,
     width: 1080,
     height: 1546,
     physics: {
@@ -9,7 +10,7 @@ let config = {
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [ System, Play, Home, GameOver]
+    scene: [ Menu, System, Play, Home, GameOver ]
 };
 
 let game = new Phaser.Game(config);

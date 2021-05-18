@@ -109,9 +109,9 @@ class Play extends Phaser.Scene{
         this.groundGroup = this.physics.add.staticGroup();
 
         //this.groundPlatform = this.groundGroup.create(540, 973, 'ground').setScale(3.0).refreshBody();
-        this.groundPlatform = this.groundGroup.create(540, 993, 'ground').setScale(3.0).refreshBody();
-        this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
-        this.groundGroup.create(randomHorizontal, randomHeight, 'ground').setOrigin(0.5, 0.5);
+        this.groundPlatform = this.groundGroup.create(540, 993, 'platform').setScale(3.0).refreshBody();
+        this.groundGroup.create(randomHorizontal, randomHeight, 'platform').setOrigin(0.5, 0.5);
+        this.groundGroup.create(randomHorizontal, randomHeight, 'platform').setOrigin(0.5, 0.5);
         
         //adding the main character
         this.main = this.physics.add.sprite(this.groundPlatform.x, randomHeight + this.groundPlatform.height, 'walk');
@@ -204,9 +204,9 @@ class Play extends Phaser.Scene{
         this.load.image('gold', './assets/gold.png');
         this.load.image('port', './assets/port.png');
         this.load.image('wall', './assets/wall.png');
-        this.load.image('wallWindowed', './assets/wallWindowed.png');
         this.load.image('book', './assets/book.png');
         this.load.image('heart', './assets/heart.png');
+        this.load.image('platform', './assets/platform.png');
     }
 
     //please load animations here
