@@ -1,4 +1,4 @@
-class Play extends Phaser.Scene{
+class Tutorial extends Phaser.Scene{
 
     constructor(){
         super('playScene');
@@ -19,30 +19,28 @@ class Play extends Phaser.Scene{
         //this will determine the direction of the bullet
         this.left = false;
         this.right = true;
+        this.launched = false;
+        this.exploded = false;
         this.playBGM();
        
         this.anims.create({
             key: 'move',
-            frames: this.anims.generateFrameNumbers('walk', { start: 0, end: 3, first: 0}),
+            frames: this.anims.generateFrameNumbers('walk', { start: 0, end: 0, first: 0}),
             frameRate: 13,
             repeat: -1
         });
 
         this.anims.create({
             key:'count',
-            frames: this.anims.generateFrameNumbers('count', {start: 0, end: 3, first: 0}),
+            frames: this.anims.generateFrameNumbers('count', {start: 0, end: 0, first: 0}),
             frameRate: 13,
             repeat: -1
         });
-
-        //add coins
         
         //bindKeys
         this.bindKeys();
         this.addObject();
-
-        this.main.setBounce(0);
-        this.main.setCollideWorldBounds(false);
+        this.addGameStats();
 
         this.main.body.setGravityY(500);  //you can jump in such height
 
@@ -53,6 +51,7 @@ class Play extends Phaser.Scene{
         this.controlMain();
         this.checkGameOver();
         this.collisionManagement();
+        this.checkWin();
 
     }
 
@@ -68,22 +67,17 @@ class Play extends Phaser.Scene{
  
     }
 
+    //colliding reusable/update
     collisionManagement(){
 
-        this.physics.add.overlap(this.main, this.gold, this.collectStar, null, this);
-        this.physics.add.collider(this.main, this.port, this.warp, null, this);
-        this.physics.add.overlap(this.main, this.books, this.collectBooks, null, this);
-        this.physics.add.overlap(this.main, this.hearts, this.collectHearts, null, this);
-        this.physics.add.collider(this.gold, this.groundPlatform, this.hittingGround, null, this);
-        this.physics.add.collider(this.groundGroup, this.girl, null, null, this);
-        this.physics.add.collider(this.main, this.girl, ()=>{
-            this.girl.disableBody(true, true);
-            console.log('girl');
-        }, null, this);
-        
+        this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
+        this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
+        this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
+        this.physics.add.collider(this.groundGroup, this.gold, this.hittingGround, null, this);
 
     }
 
+    //control of the main character
     controlMain(){
 
         if(this.cursors.left.isDown){
@@ -106,57 +100,103 @@ class Play extends Phaser.Scene{
         }
 
         if(this.cursors.up.isDown && this.main.body.touching.down){
-            this.main.setVelocityY(-900);
+            this.main.setVelocityY(-600);
             this.sound.play('jump');
         }
 
         if(this.cursors.down.isDown){
             this.main.setVelocityY(1000);
         }
+    
+        
 
         if(Phaser.Input.Keyboard.JustDown(FIRE)){
+            
             console.log('fire!');
+            
             this.bullet = this.physics.add.sprite(this.main.x, this.main.y, 'bullet');
-            if(this.left == true && this.right == false){
-                this.bullet.setVelocityX(-500);
-            } else if(this.right === true && this.left == false) {
-                this.bullet.setVelocityX(500);
+            
+            if(this.launched == false){
+
+                if(this.left == true && this.right == false){
+                    this.bullet.setVelocityX(-500);
+                } else if(this.right === true && this.left == false) {
+                    this.bullet.setVelocityX(500);
+                }
+
             }
-            this.physics.add.overlap(this.bullet, this.hearts, this.collectHearts, null, this);
-            this.physics.add.overlap(this.bullet, this.gold, this.collectStar, null, this);        
+
+            this.sound.play('ting');
+            
+            if(this.bullet.x >= 1280 || this.bullet.x <= 0 || this.bullet.y >= 800 || this.bullet.y <= 0){
+                this.bullet.destroy();
+                console.log('bullet destroy()');
+            }
+
+            this.physics.add.overlap(this.bullet, this.hearts, this.shootHearts, null, this);
+            this.physics.add.overlap(this.bullet, this.gold, this.collectStar, null, this);
+            this.physics.add.overlap(this.bullet, this.books, this.collectBooks, null, this);
+            
         }
+
+    }
+    //level design happens here
+
+
+
+    addGameStats(){
+
+    //place a text
+    this.text = this.add.text(32, 32, 'Countdown : ' + initialTime);
+    //set style
+    this.text.setStyle(this.titleConfig);
+    //for each second
+    this.timedEvent = this.time.addEvent({
+        delay : 1000,
+        callback: this.onEvent,
+        callbackScope: this,
+        loop:true
+     });
+
+     //heart stats
+     this.add.image(1120, 30, 'heart').setOrigin(0.5, 0.5);
+     this.heartCollected = this.add.text(1200, 30, numberOfHearts + '/3').setOrigin(0.5, 0.5);
+     this.heartCollected.setStyle(this.scoreConfig);
+
+     //gold stats
+     this.add.image(990, 30, 'gold').setOrigin(0.5, 0.5);
+     this.goldCollected = this.add.text(1070, 30, numberOfHearts + '/3').setOrigin(0.5, 0.5);
+     this.goldCollected.setStyle(this.scoreConfig);
 
     }
 
     addObject(){
         
-        this.add.image(540,773, 'wall').setOrigin(0.5, 0.5);
+        this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
 
         let randomHorizontal = Phaser.Math.Between(200, 700);
         let randomHeight = Phaser.Math.Between(540, 600);
 
         this.groundGroup = this.physics.add.staticGroup();
 
-        this.groundPlatform = this.groundGroup.create(540, 1200, 'longPlatform').refreshBody();
+        this.groundPlatform = this.groundGroup.create(500, 788, 'longPlatform').refreshBody();
+        this.groundGroup.create(100, 788, 'longPlatform').setOrigin(0.5, 0.5);
         //this.groundGroup.create(randomHorizontal, randomHeight, 'longPlatform').setOrigin(0.5, 0.5);
-        //this.groundGroup.create(randomHorizontal, randomHeight, 'longPlatform').setOrigin(0.5, 0.5);
-        this.groundPlatform = this.groundGroup.create(500, 500, 'shortPlatform').refreshBody();
+        this.groundPlatform = this.groundGroup.create(300, 500, 'shortPlatform').refreshBody();
         
         //adding the main character
         this.main = this.physics.add.sprite(this.groundPlatform.x, randomHeight + this.groundPlatform.height, 'walk');
-
-        this.port = this.physics.add.sprite(this.groundPlatform.x + 200, this.groundPlatform.y - 200, 'port').setScale(3.0).refreshBody();
+        this.port = this.physics.add.sprite(this.groundPlatform.x + 200, this.groundPlatform.y - 200, 'port').refreshBody();
         
-        this.girl = this.physics.add.sprite(300, 500, 'girl').setOrigin(0.5, 0.5);
-        this.girl.setGravityY(100);
         //add book for picking up
         this.books = this.physics.add.group({
             key: 'book',
             repeat: 2,
             setXY: { x: 100, y: 200, stepX : 40, stepY: 80}
         });
+
         this.books.children.iterate(function (child) {
-            child.setScale(2.0).refreshBody();
+            child.refreshBody();
         });
 
         //add gold for picking up
@@ -166,10 +206,10 @@ class Play extends Phaser.Scene{
             setXY: { x: this.groundPlatform.x - this.groundPlatform.width , y: -100, stepX: 100, stepY: 80 }
         });
         this.gold.children.iterate(function (child) {      //set the physics attribute
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            child.setScale(2.0).refreshBody();
+            child.refreshBody();
             child.setGravityY(300);
         });
+
         //add heart for picking up
         this.hearts = this.physics.add.group({
             key : 'heart',
@@ -177,22 +217,19 @@ class Play extends Phaser.Scene{
             setXY : {x : this.groundPlatform.x - 30, y : -300, stepX : 50, stepY : 35}
         });
         this.hearts.children.iterate(function (child) {
-            child.setBounceY(0.3);
-            child.setScale(2.0).refreshBody();
+            child.refreshBody();
             child.setGravityY(300);
         })
 
-        this.physics.add.collider(this.main, this.groundGroup);   //main collide
-        this.physics.add.collider(this.port, this.groundGroup);
+        this.physics.add.collider(this.main, this.groundGroup);   //main collid
         this.physics.add.collider(this.books, this.groundGroup);
         this.physics.add.collider(this.hearts, this.groundGroup);
         this.physics.add.collider(this.gold, this.groundGroup);  //group collide
         
         this.physics.add.collider(this.main, this.groundPlatform);
 
-        this.port.setGravityY(300);
 
-        let titleConfig = {
+        this.titleConfig = {
             fontFamily: 'Noteworthy',
             fontSize:'38px',
             backgroundColor:'#F3B141',
@@ -203,27 +240,30 @@ class Play extends Phaser.Scene{
             bottom: 0,
             left: 30
         },
-            fixedWidth: 200
+            fixedWidth: 400
         };
-        
 
         //how to use time event to make count down, from internet
-
-        this.text = this.add.text(32, 32, 'CountDown', initialTime);
-        this.timedEvent = this.time.addEvent({
-        delay : 1000,
-            callback: this.onEvent,
-            callbackScope: this,
-            loop:true
-        });
+        this.scoreConfig = {
+            fontFamily: 'Noteworthy',
+            fontSize:'20px',
+            color: '#FFFFFF',
+            align: 'left',
+            padding:{
+            top: 0,
+            bottom: 0,
+            left: 30
+        },
+            fixedWidth: 100
+        };
 
     }
-        
+    //countDown event
     onEvent(){
         initialTime -= 1;
-        this.text.setText('Countdown : ' + initialTime);
+        this.text.setText('Countdown : ' + initialTime, this.titleConfig);
     }
-
+    //currently useless
     addScore(){
 
         let titleConfig = {
@@ -245,23 +285,30 @@ class Play extends Phaser.Scene{
         this.score = this.add.text(100, 100, totalScore, titleConfig).setOrigin(0.5, 0.5);
 
     }
-
+    //things that happen when collecting golds
     collectStar(player,gold){
         gold.disableBody(true, true);
         gold.destroy();
         this.sound.play('ding');
         console.log('collect gold');
-
     }
-
+    //things that happen when collecting books
     collectBooks(player, book){
         book.disableBody(true, true);
         this.sound.play('ding');
     }
-
+    //things that happen when collecting hearts
     collectHearts(player, heart){
+        numberOfHearts += 1;
         heart.disableBody(true, true);
         this.sound.play('ding');
+        this.heartCollected.setText(numberOfHearts + '/3', this.scoreConfig);
+    }
+    //bullet action when hitting hearts
+    shootHearts(bullet, heart){
+        heart.disableBody(true, true);
+        this.sound.play('ting');
+        bullet.destroy();
     }
 
     hittingGround(player, gold){
@@ -272,11 +319,10 @@ class Play extends Phaser.Scene{
         this.scene.start('homeScene');
         this.bgm.stop();
         this.sound.play('fall');
-        this.main.x -= + (this.port.x);
     }
 
     checkGameOver(){
-        if(this.main.y >= 1400){
+        if(this.main.y >= 800){
             this.bgm.stop();
             this.sound.play('fall');
             this.scene.start('GameOver');
@@ -291,7 +337,7 @@ class Play extends Phaser.Scene{
         this.load.image('ground', './assets/ground.png');
         this.load.image('gold', './assets/gold.png');
         this.load.image('port', './assets/port.png');
-        this.load.image('wall', './assets/wall.png');
+        this.load.image('wall', './assets/towerbackground.png');
         this.load.image('book', './assets/book.png');
         this.load.image('heart', './assets/heart.png');
         this.load.image('longPlatform', './assets/longPlatform.png');
@@ -300,11 +346,11 @@ class Play extends Phaser.Scene{
 
     //please load animations here
     createAnimation(){
-        this.load.spritesheet('walk', './assets/walkingSheet.png',{
-            frameWidth: 108,
-            frameHeight: 192,
+        this.load.spritesheet('walk', './assets/kid.png',{
+            frameWidth: 54,
+            frameHeight: 90,
             startFrame: 0,
-            endFrame: 3,
+            endFrame: 0,
             repeat: -1
         });
 
@@ -312,7 +358,7 @@ class Play extends Phaser.Scene{
             frameWidth: 48,
             frameHeight: 48,
             startFrame: 0,
-            endFrame: 3,
+            endFrame: 0,
             repeat: -1
         });
     }
@@ -338,6 +384,15 @@ class Play extends Phaser.Scene{
             delay:0
         };
         this.bgm.play(loopConfig);
+    }
+
+    checkWin(){
+        if(numberOfHearts == 3){
+            this.gold.create(this.port.x, this.port.y, 'gold').setOrigin(0.5, 0.5);
+            numberOfHearts = 0;
+            this.physics.add.collider(this.main, this.port, this.warp, null, this); //able to let the player go
+            return;
+        }
     }
 
 }

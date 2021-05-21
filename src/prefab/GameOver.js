@@ -19,8 +19,8 @@ class GameOver extends Phaser.Scene{
             fixedWidth: 600
         };
 
-        this.add.text(540, 673, 'GameOver', titleConfig).setOrigin(0.5, 0.5);
-        this.add.text(540, 773, 'Press R to go back', titleConfig).setOrigin(0.5, 0.5);
+        this.add.text(borderX / 2, borderY / 2 - 100, 'GameOver', titleConfig).setOrigin(0.5, 0.5);
+        this.add.text(borderX / 2, borderY / 2, 'Press R to go back', titleConfig).setOrigin(0.5, 0.5);
 
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     }

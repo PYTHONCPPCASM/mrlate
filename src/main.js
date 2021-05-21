@@ -1,8 +1,8 @@
 let config = {
     type: Phaser.WEBGL,
     pixelArt:true,
-    width: 1920,
-    height: 1400,
+    width: 1280,
+    height: 800,
     physics: {
         default: 'arcade',
         arcade: {
@@ -10,7 +10,7 @@ let config = {
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [ Menu, System, Play, Home, GameOver ]
+    scene: [ Menu, System, Tutorial, Home, GameOver, Turning ]
 };
 
 let game = new Phaser.Game(config);
@@ -23,3 +23,10 @@ let keyLEFT, keyRIGHT, keyUP, keyDOWN, FIRE;
 let warped = false;
 let initialTime = 150;
 this.gameOver = false;
+let gotTicket = false;  //this will determine if the player can proceed to the next level
+let bulletrange = 400;
+
+//global variable for each
+let numberOfHearts = 0;
+let numberOfGold = 0;
+let numberOfBooks = 0;

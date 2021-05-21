@@ -16,8 +16,7 @@ class Menu extends Phaser.Scene{
         this.main = this.add.image(540, 573, 'start').setScale(5.0).setInteractive().setOrigin(0.5, 0.5);
         
         this.main.once('pointerup', ()=> {
-            console.log('lololololol');
-            this.scene.start('playScene');
+            this.scene.start('turningScene');
         }, this);
         
     }
