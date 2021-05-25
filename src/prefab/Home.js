@@ -6,11 +6,11 @@ class Home extends Phaser.Scene{
     preload(){
         
         //make a sprite sheet call walk
-        this.load.spritesheet('walk', './assets/walkingSheet.png',{
-            frameWidth: 108,
-            frameHeight: 192,
+        this.load.spritesheet('walk', './assets/kid.png',{
+            frameWidth: 42,
+            frameHeight: 78,
             startFrame: 0,
-            endFrame: 3,
+            endFrame: 2,
             repeat: -1
         });
 
@@ -39,6 +39,8 @@ class Home extends Phaser.Scene{
             fixedWidth: 773
         };
 
+
+        //slice the walk and name it move
         this.anims.create({
             key: 'move',
             frames: this.anims.generateFrameNumbers('walk', {start: 0, end: 3, first: 0}),

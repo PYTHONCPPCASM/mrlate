@@ -11,10 +11,6 @@ class Turning extends Phaser.Scene{
     create(){
         console.log('turning scene');
         this.add.text(borderX / 2, borderY / 2, 'moving to the next scene');
-        this.time.delayedCall(100, ()=>{
-            this.scene.start('playScene');    
-        });
-        
     }
 
 }
