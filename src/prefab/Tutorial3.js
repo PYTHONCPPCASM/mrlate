@@ -42,7 +42,7 @@ class Tutorial3 extends Phaser.Scene{
         this.addObject();
         this.addGameStats();
 
-        setInterval(()=>{
+        this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
             console.log(this.enemydirection);
             this.ghost.flipX = true;
@@ -260,10 +260,10 @@ class Tutorial3 extends Phaser.Scene{
 
     checkGameOver(){
         if(this.main.y >= 800){
-            this.levelManagement();
+            this.levelManagement('bring you back in 3s');
         }
         if(initialTime < 0){
-            this.levelManagement();
+            this.levelManagement('bring you back in 3s');
         }
     }
 
@@ -337,7 +337,7 @@ class Tutorial3 extends Phaser.Scene{
                                                             'and don\'t fall off the stair,\n' +
                                                             ' and I love you"',
                                                             titleConfig).setOrigin(0.5, 0.5);
-        this.time.delayedCall(3000, ()=>{
+        this.time.delayedCall(10000, ()=>{
             this.black.destroy();
             this.word.destroy();
             this.ready = true;

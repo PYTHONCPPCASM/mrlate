@@ -28,7 +28,7 @@ class Menu extends Phaser.Scene{
             'art: chuanyu xiao, can huang\n' +
             'Production Management : Minghui Ye\n', titleConfig).setOrigin(0.5, 0.5);
             
-            this,time.delayedCall(10000, ()=>{
+            this.time.delayedCall(10000, ()=>{
                     this.creditText.destroy();
                 }
             );
