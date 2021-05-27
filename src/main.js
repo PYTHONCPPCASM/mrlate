@@ -6,11 +6,11 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: false,
+            debug: true,
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [ Menu, System, Tutorial, Home, GameOver, Turning, Dialog ]
+    scene: [ Menu, System, Tutorial, Tutorial2, Home, GameOver, Turning, Dialog ]
 };
 
 let game = new Phaser.Game(config);
@@ -37,7 +37,7 @@ let booksTarget = 3;
 
 let titleConfig = {
     fontFamily: 'menlo',
-    fontSize:'38px',
+    fontSize:'30px',
     color: '#FFFFFF',
     align: 'left',
     padding:{
@@ -59,3 +59,4 @@ let scoreConfig = {
 },
     fixedWidth: 100
 };
+

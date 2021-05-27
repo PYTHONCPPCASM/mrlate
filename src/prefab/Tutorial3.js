@@ -1,7 +1,7 @@
-class Tutorial extends Phaser.Scene{
+class Tutorial2 extends Phaser.Scene{
 
     constructor(){
-        super('playScene');
+        super('playScene2');
     }
 
     preload(){
@@ -19,9 +19,21 @@ class Tutorial extends Phaser.Scene{
         this.left = false;
         this.right = true;
         this.ready = false;
-        this.win = false;
-
-        this.playBGM();
+        //this.playBGM();
+        console.log('bgm 2');
+        console.log('lolol');
+        let loopConfig = {
+            mute:false,
+            volume:1,
+            rate:1,
+            detune:0,
+            seek:0,
+            loop:true,
+            delay:0
+        };
+        this.bgm2 = this.sound.add('bgm2', loopConfig);
+        
+        this.bgm2.play();
         this.createAnimation();
         //bindKeys
         this.bindKeys();
@@ -33,11 +45,9 @@ class Tutorial extends Phaser.Scene{
     update(){
 
         this.main.body.setGravityY(300);  //you can jump in such height
-        
         if(this.ready == true){
-            this.controlMain();
+            this.controlMain();    
         }
-
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
@@ -45,7 +55,7 @@ class Tutorial extends Phaser.Scene{
     }
 
     createAnimation(){
-
+        console.log("create animation");
         this.anims.create({
             key: 'walkLeft',
             frames: this.anims.generateFrameNumbers('goLeft', { start: 0, end: 7, first: 0}),
@@ -66,7 +76,7 @@ class Tutorial extends Phaser.Scene{
             frameRate: 13,
             repeat: -1
         });
-    
+        
 
     }
 
@@ -84,12 +94,8 @@ class Tutorial extends Phaser.Scene{
 
     //colliding reusable/update
     collisionManagement(){
-
         this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
-        //this.physics.add.overlap(this.main, this.books, this.collectBooks, null, this);
-        this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
-        //this.physics.add.collider(this.groundGroup, this.gold, this.hittingGround, null, this);
-
+        this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
     }
 
     //control of the main character
@@ -128,12 +134,12 @@ class Tutorial extends Phaser.Scene{
             
             console.log('fire!');
             
-            this.bullet = this.physics.add.sprite(this.main.x, this.main.y, 'bullet');
+            this.bullet = this.physics.add.sprite(this.main.x, this.main.y, 'bullet').setScale(2.0);
             
                 if(this.left == true && this.right == false){
+                    this.bullet.flipX = true;
                     this.bullet.setVelocityX(-500);
                 } else if(this.right === true && this.left == false) {
-                    this.bullet.flipX = true;
                     this.bullet.setVelocityX(500);
                 }
 
@@ -143,11 +149,7 @@ class Tutorial extends Phaser.Scene{
                 this.bullet.destroy();
                 console.log('bullet destroy()');
             }
-
-            this.physics.add.collider(this.bullet, this.hearts, this.shootHearts, null, this);
-            // this.physics.add.collider(this.bullet, this.gold, this.shootStar, null, this);
-            // this.physics.add.collider(this.bullet, this.books, this.shootBooks, null, this);
-            
+            this.physics.add.collider(this.bullet, this.books, this.hittingObject, null, this);
         }
 
     }
@@ -155,138 +157,105 @@ class Tutorial extends Phaser.Scene{
 
     addGameStats(){
     numberOfHearts = 0;
-    //countDown
     initialTime = 30;
-    this.countDown();
-
-     //heart stats
-     this.add.image(1120, 30, 'heart').setOrigin(0.5, 0.5);
-     this.heartCollected = this.add.text(1200, 30, numberOfHearts + '/' + heartsTarget).setOrigin(0.5, 0.5);
-     this.heartCollected.setStyle(scoreConfig);
-
-     //gold stats
-    //  this.add.image(990, 30, 'gold').setOrigin(0.5, 0.5);
-    //  this.goldCollected = this.add.text(1070, 30, numberOfHearts + '/' + goldTarget).setOrigin(0.5, 0.5);
-    //  this.goldCollected.setStyle(scoreConfig);
-
-    //  //book stats
-    //  this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
-    //  this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + booksTarget).setOrigin(0.5, 0.5);
-    //  this.bookCollected.setStyle(scoreConfig);
-
-    }
-
-    countDown(){
-        this.text = this.add.text(32, 32, 'Countdown : ' + initialTime);
+    this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
     //set style
     this.text.setStyle(titleConfig);
     //for each second
-    this.timedEvent = this.time.addEvent({
-        delay : 1000,
-        callback : this.onEvent,
-        callbackScope : this,
-        loop : true
-    });
+    // this.timedEvent = this.time.addEvent({
+    //     delay : 1000,
+    //     callback : this.onEvent,
+    //     callbackScope : this,
+    //     loop : true
+    // });
+
+    //  //book stats
+     this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
+     this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + booksTarget).setOrigin(0.5, 0.5);
+     this.bookCollected.setStyle(scoreConfig);
+
     }
 
     addObject(){
-        
-        this.dialog();
 
         this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
 
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
-        this.groundGroup.create(100, 700, 'longPlatform');
-        this.groundGroup.create(300, 500, 'longPlatform');
-        this.groundGroup.create(500, 400, 'shortPlatform').refreshBody();
-        this.groundGroup.create(700, 200, 'longPlatform').refreshBody();
-        this.groundGroup.create(1000, 200, 'longPlatform').refreshBody();
+        //this.groundPlatform = this.groundGroup.create(500, 788, 'longPlatform').refreshBody();
+        this.groundGroup.create(150, 700, 'longPlatform');
+        this.groundGroup.create(250, 600, 'shortPlatform');
+        this.groundGroup.create(350, 500, 'shortPlatform').refreshBody();
+        this.groundGroup.create(450, 400, 'shortPlatform').refreshBody();
+        this.groundGroup.create(550, 300, 'shortPlatform').refreshBody();
+        this.groundGroup.create(650, 200, 'shortPlatform').refreshBody();
+        this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
         //this.movingPlatform = this.groundGroup.create(700, 600, 'longPlatform').refreshBody();
 
         //adding the main character
-        this.main = this.physics.add.sprite(300, 300, 'goLeft').setScale(2.0);
+        this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(2.0);
 
         //add book for picking up
-        //
+        // 
 
-        //add gold for picking up
-        // this.gold = this.physics.add.group({
-        //     key: 'gold',
-        //     repeat: 2,
-        //     setXY: { x: 200, y: 300, stepX: 0, stepY: 100 }
-        // });
-        // //for each gold placed
-        // this.gold.children.iterate(function (child) {     
-        //     child.refreshBody();
-        // });
-
-        //add heart for picking up
-       this.hearts = this.physics.add.group({
-            key : 'heart',
-            repeat : 10,
-            setXY : {x : 100, y : 0, stepX : 100, stepY : 0}
+        this.books = this.physics.add.group({
+            key: 'book',
+            repeat : 5,
+            setXY : {x: 150, y: 600, stepX : 100, stepY : -100}
         });
-        this.hearts.children.iterate(function (child) {
+
+        this.books.children.iterate((child)=>{
             child.refreshBody();
             child.setGravityY(300);
         });
-
-        //set colliding enabled
         
         this.physics.add.collider(this.main, this.groundGroup);   //main walking on ground
-        //this.physics.add.collider(this.books, this.groundGroup);
-        this.physics.add.collider(this.hearts, this.groundGroup);
-        //this.physics.add.collider(this.gold, this.groundGroup);
+        this.physics.add.collider(this.books, this.groundGroup);
         this.physics.add.collider(this.main, this.groundPlatform);
-        
+
+        //how to use time event to make count down, from internet
         this.dialog();
-
     }
-
+    //countDown event
     onEvent(){
         initialTime -= 1;
         this.text.setText('Countdown : ' + initialTime, titleConfig);
     }
 
-    collectHearts(player, heart){
+    collectBooks(player, book){
+        numberOfBooks += 1;
+        this.bookCollected.setText(numberOfBooks + '/' + booksTarget);
+        book.disableBody(true, true);
         this.sound.play('ding');
-        this.heartCollected.setStyle(scoreConfig);
-        if(this.win == false){
-            numberOfHearts += 1;
-            heart.disableBody(true, true);
-            this.heartCollected.setText(numberOfHearts + '/' + heartsTarget);
-        }
     }
 
-    warp(player, candy){
+    hittingObject(subject, object){
+        subject.destroy();
+        object.destroy();
+        this.sound.play('ding');
+    }
+   
+    warp(player, gold){
+        this.ready = false;
         player.setVelocityX(0);
         player.setVelocityY(0);
-        candy.disableBody();
-        candy.destroy();
-        this.bgm.stop();
+        gold.destroy();  // this is the key
         this.sound.play('fall');
+        this.bgm2.stop();
         this.add.rectangle(borderX / 2, borderY / 2 , 1280, 800, '#000000');
         this.add.text(640, 400, 'you have cleared the stage,'
-                               + '\nsending you to the next stage...',
+                               +'\nsending you to the next stage...',
                                  titleConfig).setOrigin();
-        this.win = true;
-        this.ready = false;
-        this.time.delayedCall(1400, ()=>{
-            this.scene.start('playScene2');
-        });
+        this.time.delayedCall(1400, ()=>{this.scene.start('homeScene');});
     }
 
     checkGameOver(){
-        if(this.main.y >= 800 || initialTime < 0){
+        if(this.main.y >= 800){
             this.levelManagement();
         }
-    }
-
-    sendingYou(){
-        this.add.rectangle(borderX / 2, borderY / 2 , 1280, 800, '#000000');
-        this.add.text(borderX / 2, borderY / 2, "sending you to the next stage...");
-        this.ready = false;
+        if(initialTime < 0){
+            this.levelManagement();
+        }
     }
 
     loadVisualAssets(){
@@ -303,12 +272,10 @@ class Tutorial extends Phaser.Scene{
         this.load.image('longPlatform', './assets/longPlatform.png');
         this.load.image('shortPlatform', './assets/shortPlatform.png');
         this.load.image('candy', './assets/candy.png');
-        // this.load.image('goLeft', './assets/goLeft.png');
-        // this.load.image('goRight', './assets/goRight.png');
 
         this.load.spritesheet('kid', './assets/kid.png', {
             frameWidth:32,
-            frameHeight:64,
+            frameHeight:60,
             startFrame:0,
             endFrame:2,
             repeat: -1
@@ -316,7 +283,7 @@ class Tutorial extends Phaser.Scene{
         //slicing the spritesheet
         this.load.spritesheet('goLeft', './assets/goLeft.png', {
             frameWidth:32,
-            frameHeight:64,
+            frameHeight:60,
             startFrame:0,
             endFrame:7,
             repeat: -1
@@ -324,50 +291,17 @@ class Tutorial extends Phaser.Scene{
 
         this.load.spritesheet('goRight', './assets/goRight.png', {
             frameWidth:32,
-            frameHeight:64,
+            frameHeight:60,
             startFrame:0,
             endFrame:7,
             repeat: -1
         });
-
     }
 
-    //please load animations here
-    // createAnimation(){
-    //     this.load.spritesheet('left', './assets/kid.png', {
-    //         frameWidth: 42,
-    //         frameHeight: 78,
-    //         startFrame: 0,
-    //         endFrame: 1,
-    //         repeat: -1
-    //     });
-    //     this.load.spritesheet('right', './assets/kid.png', {
-    //         frameWidth: 42,
-    //         frameHeight: 78,
-    //         startFrame: 1,
-    //         endFrame: 2,
-    //         repeat: -1
-    //     });
-    //     this.load.spritesheet('mid', './assets/kid.png', {
-    //         frameWidth:42,
-    //         frameHeight:78,
-    //         startFrame:1,
-    //         endFrame:1,
-    //         repeat: -1
-    //     });
-
-    //     this.load.spritesheet('count', './assets/count.png' , {
-    //         frameWidth: 48,
-    //         frameHeight: 48,
-    //         startFrame: 0,
-    //         endFrame: 2,
-    //         repeat: -1
-    //     });
-    // }
 
     loadSFX(){
         this.load.audio('ting', './assets/coinpickup.wav');
-        this.load.audio('bgm', './assets/backgroundmusic.wav');
+        this.load.audio('bgm2', './assets/backgroundmusic.wav');
         this.load.audio('footstep', './assets/footstep.wav');
         this.load.audio('jump', './assets/jump.wav');
         this.load.audio('fall', './assets/fall.wav');
@@ -375,49 +309,43 @@ class Tutorial extends Phaser.Scene{
     }
 
     playBGM(){
-        console.log('bgm1');
-        this.bgm = this.sound.add('bgm');
-        let loopConfig = {
-            mute:false,
-            volume:1,
-            rate:1,
-            detune:0,
-            seek:0,
-            loop:true,
-            delay:0
-        };
-        this.bgm.play(loopConfig);
+        
     }
 
     checkWin(){
-        if(numberOfHearts == 3){
-            this.hearts.clear(this);
-            this.candy = this.physics.add.sprite(1000, 150, 'candy').setOrigin(0.5, 0.5);
-            this.sound.play('fall');
-            this.heartCollected.setText(3 + '/3');
+        if(numberOfBooks == 6){
+            this.gold = this.physics.add.sprite(1000, 550, 'gold').setOrigin(0.5, 0.5);
             numberOfHearts = 0;
-            this.physics.add.collider(this.main, this.candy, this.warp, null, this);
+            numberOfGold = 0;
+            numberOfBooks = 0;
+            this.physics.add.collider(this.main, this.gold, this.warp, null, this);
+            return;
         }
     }
 
     dialog(){
-        // this.black = this.add.rectangle(0, 0, 1280, 800, '#000000').setOrigin(0.5, 0.5);
-        this.word = this.add.text(35, 100, 'Objective : collect 3 Hearts', titleConfig);
-         this.time.delayedCall(3000, ()=>{
-        //     this.black.destroy();
-        //     this.word.destroy();
-             this.ready = true;
-         });
+        this.black = this.add.rectangle(0, 0, 2560, 1600, '#000000').setOrigin(0.5, 0.5);
+        this.word = this.add.text(borderX / 2, borderY / 2, 'mom says : "education makes you wealthier\n' +
+                                                            '"enough" isn\'t enough\n' + 
+                                                            'and don\'t fall off the stair,\n' +
+                                                            ' and I love you"',
+                                                            titleConfig).setOrigin(0.5, 0.5);
+        this.time.delayedCall(3000, ()=>{
+            this.black.destroy();
+            this.word.destroy();
+            this.ready = true;
+        });
     }
 
-    levelManagement(){
+    levelManagement(message){
 
         this.ready = false;
-        this.bgm.stop();
+        this.bgm2.stop();
+        
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
-        this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'you fall off the stairs\n'
-                                                                 + 'game restart in 3s',
+        this.gameRestart = this.add.text(borderX / 2, borderY / 2, message,
                                                     titleConfig).setOrigin(0.5, 0.5);
+
         this.time.delayedCall(3000, ()=>{
             this.scene.start();
         });
