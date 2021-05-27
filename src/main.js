@@ -10,7 +10,7 @@ let config = {
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [ Menu, System, Tutorial, Tutorial2, Home, GameOver, Turning, Dialog ]
+    scene: [ Menu, System, Tutorial, Tutorial2, Tutorial3, Home, GameOver, Turning, Dialog ]
 };
 
 let game = new Phaser.Game(config);
@@ -59,4 +59,3 @@ let scoreConfig = {
 },
     fixedWidth: 100
 };
-
