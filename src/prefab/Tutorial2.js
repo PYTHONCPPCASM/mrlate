@@ -246,7 +246,7 @@ class Tutorial2 extends Phaser.Scene{
         this.add.text(640, 400, 'you have cleared the stage,'
                                +'\nsending you to the next stage...',
                                  titleConfig).setOrigin();
-        this.time.delayedCall(1400, ()=>{this.scene.start('homeScene');});
+        this.time.delayedCall(1400, ()=>{this.scene.start('playScene3');});
     }
 
     checkGameOver(){

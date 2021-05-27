@@ -1,7 +1,7 @@
 class Tutorial3 extends Phaser.Scene{
 
     constructor(){
-        super('playScene2');
+        super('playScene3');
     }
 
     preload(){
@@ -14,6 +14,8 @@ class Tutorial3 extends Phaser.Scene{
     }
 
     create(){
+        this.enemydirection = -1;
+        console.log('level 3')
         //this will determine the direction of the bullet
         this.fire = false;
         this.left = false;
@@ -40,10 +42,15 @@ class Tutorial3 extends Phaser.Scene{
         this.addObject();
         this.addGameStats();
 
+        setInterval(()=>{
+            this.enemydirection *= -1;
+            console.log(this.enemydirection);
+            this.ghost.flipX = true;
+        }, 2000);
+
     }
 
     update(){
-
         this.main.body.setGravityY(300);  //you can jump in such height
         if(this.ready == true){
             this.controlMain();    
@@ -51,9 +58,13 @@ class Tutorial3 extends Phaser.Scene{
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
+        this.ghost.x += 1 * this.enemydirection;
 
     }
 
+    enemyMoving(subject, x, boundX, boundX2){
+
+    }
     createAnimation(){
         console.log("create animation");
         this.anims.create({
@@ -89,7 +100,7 @@ class Tutorial3 extends Phaser.Scene{
         this.cursors = this.input.keyboard.createCursorKeys();
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         FIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
- 
+
     }
 
     //colliding reusable/update
@@ -178,8 +189,8 @@ class Tutorial3 extends Phaser.Scene{
 
     addObject(){
 
-        this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
-
+        this.add.image(borderX / 2, borderY / 2, 'wall').setOrigin(0.5, 0.5);
+        this.add.image(borderX / 2, borderY / 2, 'window').setOrigin(0.5, 0.5);
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
         //this.groundPlatform = this.groundGroup.create(500, 788, 'longPlatform').refreshBody();
@@ -194,16 +205,14 @@ class Tutorial3 extends Phaser.Scene{
 
         //adding the main character
         this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(2.0);
-
+        this.ghost = this.physics.add.sprite(1000, 400, 'ghost');
         //add book for picking up
-        // 
-
+        //
         this.books = this.physics.add.group({
             key: 'book',
             repeat : 5,
             setXY : {x: 150, y: 600, stepX : 100, stepY : -100}
         });
-
         this.books.children.iterate((child)=>{
             child.refreshBody();
             child.setGravityY(300);
@@ -259,7 +268,8 @@ class Tutorial3 extends Phaser.Scene{
     }
 
     loadVisualAssets(){
-        this.load.image('girl', './assets/girl.png');
+
+        this.load.image('window', './assets/window2.png');
         this.load.image('bullet', './assets/bullet.png');
         this.load.image('late', './assets/kid.png');
         this.load.image('background', './assets/scene1.png');
@@ -272,6 +282,7 @@ class Tutorial3 extends Phaser.Scene{
         this.load.image('longPlatform', './assets/longPlatform.png');
         this.load.image('shortPlatform', './assets/shortPlatform.png');
         this.load.image('candy', './assets/candy.png');
+        this.load.image('ghost', './assets/ghost.png');
 
         this.load.spritesheet('kid', './assets/kid.png', {
             frameWidth:32,
@@ -282,9 +293,9 @@ class Tutorial3 extends Phaser.Scene{
         });
         //slicing the spritesheet
         this.load.spritesheet('goLeft', './assets/goLeft.png', {
-            frameWidth:32,
             frameHeight:60,
             startFrame:0,
+            frameWidth:32,
             endFrame:7,
             repeat: -1
         });
@@ -306,10 +317,6 @@ class Tutorial3 extends Phaser.Scene{
         this.load.audio('jump', './assets/jump.wav');
         this.load.audio('fall', './assets/fall.wav');
         this.load.audio('ding', './assets/ding.wav');
-    }
-
-    playBGM(){
-        
     }
 
     checkWin(){
