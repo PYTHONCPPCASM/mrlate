@@ -122,12 +122,12 @@ class Tutorial2 extends Phaser.Scene{
         }
 
         if(this.cursors.up.isDown && this.main.body.touching.down){
-            this.main.setVelocityY(-400);
+            this.main.setVelocityY(-300);
             this.sound.play('jump');
         }
 
         if(this.cursors.down.isDown){
-            this.main.setVelocityY(300);
+            this.main.setVelocityY(200);
         }
 
         if(Phaser.Input.Keyboard.JustDown(FIRE)){

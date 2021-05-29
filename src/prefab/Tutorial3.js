@@ -41,7 +41,8 @@ class Tutorial3 extends Phaser.Scene{
         this.bindKeys();
         this.addObject();
         this.addGameStats();
-
+        
+        //ghost timer
         this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
             console.log(this.enemydirection);
@@ -53,8 +54,9 @@ class Tutorial3 extends Phaser.Scene{
     update(){
         this.main.body.setGravityY(300);  //you can jump in such height
         if(this.ready == true){
-            this.controlMain();    
+            this.controlMain();
         }
+        
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
@@ -133,12 +135,12 @@ class Tutorial3 extends Phaser.Scene{
         }
 
         if(this.cursors.up.isDown && this.main.body.touching.down){
-            this.main.setVelocityY(-400);
+            this.main.setVelocityY(-300);
             this.sound.play('jump');
         }
 
         if(this.cursors.down.isDown){
-            this.main.setVelocityY(300);
+            this.main.setVelocityY(200);
         }
 
         if(Phaser.Input.Keyboard.JustDown(FIRE)){
@@ -337,7 +339,7 @@ class Tutorial3 extends Phaser.Scene{
                                                             'and don\'t fall off the stair,\n' +
                                                             ' and I love you"',
                                                             titleConfig).setOrigin(0.5, 0.5);
-        this.time.delayedCall(10000, ()=>{
+        this.time.delayedCall(1000, ()=>{
             this.black.destroy();
             this.word.destroy();
             this.ready = true;

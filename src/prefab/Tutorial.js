@@ -37,7 +37,7 @@ class Tutorial extends Phaser.Scene{
         if(this.ready == true){
             this.controlMain();
         }
-
+        this.ghost.x += 1 * this.enemydirection;
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
@@ -66,7 +66,6 @@ class Tutorial extends Phaser.Scene{
             frameRate: 13,
             repeat: -1
         });
-    
 
     }
 
@@ -88,7 +87,7 @@ class Tutorial extends Phaser.Scene{
         this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
         //this.physics.add.overlap(this.main, this.books, this.collectBooks, null, this);
         this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
-        //this.physics.add.collider(this.groundGroup, this.gold, this.hittingGround, null, this);
+        this.physics.add.overlap(this.main, this.ghost, this.hitGhost, null, this);
 
     }
 
@@ -106,22 +105,23 @@ class Tutorial extends Phaser.Scene{
             this.right = true;
             this.left = false;
         } else {
+            
             this.main.setVelocityX(0);
             if( this.left == true && this.right == false){
                 this.main.anims.play('walkLeft');
             } else if(this.left == false && this.right == true) {
                 this.main.anims.play('walkRight');
             }
-            
+
         }
 
         if(this.cursors.up.isDown && this.main.body.touching.down){
-            this.main.setVelocityY(-400);
+            this.main.setVelocityY(-320);
             this.sound.play('jump');
         }
 
         if(this.cursors.down.isDown){
-            this.main.setVelocityY(300);
+            this.main.setVelocityY(200);
         }
 
         if(Phaser.Input.Keyboard.JustDown(FIRE)){
@@ -144,10 +144,8 @@ class Tutorial extends Phaser.Scene{
                 console.log('bullet destroy()');
             }
 
-            this.physics.add.collider(this.bullet, this.hearts, this.shootHearts, null, this);
-            // this.physics.add.collider(this.bullet, this.gold, this.shootStar, null, this);
-            // this.physics.add.collider(this.bullet, this.books, this.shootBooks, null, this);
-            
+            this.physics.add.collider(this.bullet, this.ghost, this.killGhost, null, this);
+
         }
 
     }
@@ -163,16 +161,6 @@ class Tutorial extends Phaser.Scene{
      this.add.image(1120, 30, 'heart').setOrigin(0.5, 0.5);
      this.heartCollected = this.add.text(1200, 30, numberOfHearts + '/' + heartsTarget).setOrigin(0.5, 0.5);
      this.heartCollected.setStyle(scoreConfig);
-
-     //gold stats
-    //  this.add.image(990, 30, 'gold').setOrigin(0.5, 0.5);
-    //  this.goldCollected = this.add.text(1070, 30, numberOfHearts + '/' + goldTarget).setOrigin(0.5, 0.5);
-    //  this.goldCollected.setStyle(scoreConfig);
-
-    //  //book stats
-    //  this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
-    //  this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + booksTarget).setOrigin(0.5, 0.5);
-    //  this.bookCollected.setStyle(scoreConfig);
 
     }
 
@@ -192,41 +180,31 @@ class Tutorial extends Phaser.Scene{
     addObject(){
         
         this.dialog();
+        this.enemydirection = -1;
 
         this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
 
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
-        this.groundGroup.create(100, 700, 'longPlatform');
+        this.groundGroup.create(100, 600, 'longPlatform');
         this.groundGroup.create(300, 500, 'longPlatform');
+        this.groundGroup.create(400, 330, 'shortPlatform');
         this.groundGroup.create(500, 400, 'shortPlatform').refreshBody();
         this.groundGroup.create(700, 200, 'longPlatform').refreshBody();
         this.groundGroup.create(1000, 200, 'longPlatform').refreshBody();
         //this.movingPlatform = this.groundGroup.create(700, 600, 'longPlatform').refreshBody();
 
         //adding the main character
-        this.main = this.physics.add.sprite(300, 300, 'goLeft').setScale(2.0);
-
-        //add book for picking up
-        //
-
-        //add gold for picking up
-        // this.gold = this.physics.add.group({
-        //     key: 'gold',
-        //     repeat: 2,
-        //     setXY: { x: 200, y: 300, stepX: 0, stepY: 100 }
-        // });
-        // //for each gold placed
-        // this.gold.children.iterate(function (child) {     
-        //     child.refreshBody();
-        // });
-
-        //add heart for picking up
-       this.hearts = this.physics.add.group({
+        
+        this.main = this.physics.add.sprite(50, 300, 'goLeft').setScale(2.0).setOrigin(0.8, 0.5);
+        this.ghost = this.physics.add.sprite(600, 180, 'ghost');
+        console.log(this.ghost.x);
+        this.hearts = this.physics.add.group({
             key : 'heart',
-            repeat : 10,
-            setXY : {x : 100, y : 0, stepX : 100, stepY : 0}
+            repeat : 3,
+            setXY : {x : 130, y : 0, stepX : 100, stepY : 0}
         });
+
         this.hearts.children.iterate(function (child) {
             child.refreshBody();
             child.setGravityY(300);
@@ -241,6 +219,13 @@ class Tutorial extends Phaser.Scene{
         this.physics.add.collider(this.main, this.groundPlatform);
         
         this.dialog();
+
+        this.oscillate = setInterval(()=>{
+            this.enemydirection *= -1;
+            console.log(this.enemydirection);
+            this.ghost.flipX = true;
+            console.log(this.ghost.x);
+        }, 3000);
 
     }
 
@@ -290,6 +275,7 @@ class Tutorial extends Phaser.Scene{
     }
 
     loadVisualAssets(){
+        this.load.image('ghost', './assets/ghost.png');
         this.load.image('girl', './assets/girl.png');
         this.load.image('bullet', './assets/bullet.png');
         this.load.image('late', './assets/kid.png');
@@ -332,39 +318,6 @@ class Tutorial extends Phaser.Scene{
 
     }
 
-    //please load animations here
-    // createAnimation(){
-    //     this.load.spritesheet('left', './assets/kid.png', {
-    //         frameWidth: 42,
-    //         frameHeight: 78,
-    //         startFrame: 0,
-    //         endFrame: 1,
-    //         repeat: -1
-    //     });
-    //     this.load.spritesheet('right', './assets/kid.png', {
-    //         frameWidth: 42,
-    //         frameHeight: 78,
-    //         startFrame: 1,
-    //         endFrame: 2,
-    //         repeat: -1
-    //     });
-    //     this.load.spritesheet('mid', './assets/kid.png', {
-    //         frameWidth:42,
-    //         frameHeight:78,
-    //         startFrame:1,
-    //         endFrame:1,
-    //         repeat: -1
-    //     });
-
-    //     this.load.spritesheet('count', './assets/count.png' , {
-    //         frameWidth: 48,
-    //         frameHeight: 48,
-    //         startFrame: 0,
-    //         endFrame: 2,
-    //         repeat: -1
-    //     });
-    // }
-
     loadSFX(){
         this.load.audio('ting', './assets/coinpickup.wav');
         this.load.audio('bgm', './assets/backgroundmusic.wav');
@@ -401,21 +354,51 @@ class Tutorial extends Phaser.Scene{
     }
 
     dialog(){
-        // this.black = this.add.rectangle(0, 0, 1280, 800, '#000000').setOrigin(0.5, 0.5);
         this.word = this.add.text(35, 100, 'Objective : collect 3 Hearts', titleConfig);
          this.time.delayedCall(3000, ()=>{
-        //     this.black.destroy();
-        //     this.word.destroy();
              this.ready = true;
          });
     }
 
-    levelManagement(){
+    hitGhost(subject, object){
+        if(subject){
+            subject.destroy();
+        }
+        if(object){
+            object.destroy();
+        }
+        this.sound.play('ding');
+        this.ready = false;
+        this.bgm.stop();
+        clearInterval(this.oscillate);
+        this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
+        this.main.setVelocityX(0);
+        this.main.setVelocityY(0);
+        this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'you have kill by the death\n'
+                                                                 + 'game restart in 3s',
+                                                    titleConfig).setOrigin(0.5, 0.5);
+        this.time.delayedCall(3000, ()=>{
+            this.scene.start();
+        });
+    }
 
+    killGhost(bullet, ghost){
+        ghost.destroy();
+        bullet.destroy();
+        this.sound.play('ding');
+    }
+
+    levelManagement(subject, object){
+        if(object){
+            object.destroy();
+        }
+        clearInterval(this.oscillate);
         this.ready = false;
         this.bgm.stop();
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
-        this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'you fall off the stairs\n'
+        this.main.setVelocityX(0);
+        this.main.setVelocityY(0);
+        this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'game over\n'
                                                                  + 'game restart in 3s',
                                                     titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{

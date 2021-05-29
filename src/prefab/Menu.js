@@ -18,7 +18,7 @@ class Menu extends Phaser.Scene{
         this.credit = this.add.image(borderX / 2, borderY / 2 + 100, 'credit').setScale(3).setInteractive().setOrigin(0.5, 0.5);
         
         this.main.once('pointerup', ()=> {
-            this.scene.start('playScene3');
+            this.scene.start('playScene');
         }, this);
 
         this.creditText;
@@ -28,7 +28,7 @@ class Menu extends Phaser.Scene{
             'art: chuanyu xiao, can huang\n' +
             'Production Management : Minghui Ye\n', titleConfig).setOrigin(0.5, 0.5);
             
-            this.time.delayedCall(10000, ()=>{
+            this.time.delayedCall(3000, ()=>{
                     this.creditText.destroy();
                 }
             );
