@@ -15,6 +15,7 @@ class Tutorial3 extends Phaser.Scene{
 
     create(){
         //this will determine the direction of the bullet
+        this.timer = 0;
         numberOfBooks = 0;
         this.fire = false;
         this.left = false;
@@ -35,6 +36,8 @@ class Tutorial3 extends Phaser.Scene{
         this.bgm2 = this.sound.add('bgm2', loopConfig);
         this.bgm2.play();
         this.createAnimation();
+        
+
         //bindKeys
         this.bindKeys();
         this.addObject();
@@ -43,15 +46,16 @@ class Tutorial3 extends Phaser.Scene{
     }
 
     update(){
-
         this.main.body.setGravityY(300);  //you can jump in such height
         if(this.ready == true){
-            this.controlMain(); 
+            this.controlMain();
         }
+        
         this.ghostMovement();
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
+        this.fire1.update();
 
     }
 
@@ -189,6 +193,7 @@ class Tutorial3 extends Phaser.Scene{
     }
 
     addObject(){
+
         this.enemydirection = -1;
         this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
         numberOfGhost = 0;
@@ -201,6 +206,7 @@ class Tutorial3 extends Phaser.Scene{
         this.groundGroup.create(850, 300, 'shortPlatform').refreshBody();
         this.groundGroup.create(700, 200, 'shortPlatform').refreshBody();
         this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
+        
 
         //adding the main character
         this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(1.0);
@@ -208,8 +214,9 @@ class Tutorial3 extends Phaser.Scene{
         //add ghost
         this.ghost = this.physics.add.sprite(300, 400, 'ghost');
         this.ghost2 = this.physics.add.sprite(200, 300, 'ghost');
-        //add book for picking up
-        // 
+        //firing
+        
+        
 
         this.books = this.physics.add.group({
             key: 'book',
@@ -225,15 +232,19 @@ class Tutorial3 extends Phaser.Scene{
         this.physics.add.collider(this.main, this.groundGroup);   //main walking on ground
         this.physics.add.collider(this.books, this.groundGroup);
         this.physics.add.collider(this.main, this.groundPlatform);
-
         
+
         this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
             console.log(this.enemydirection);
             this.ghost.flipX = true;
             this.ghost2.flipX = true;
-            console.log(this.ghost.x);
+            this.emitX = this.ghost.x;
+            this.emitY = this.ghost.y;
+            
         }, 3000);
+
+        this.fire1 = new ghostFire(this, 200, 200, 'fire', 0, this.emitX);
 
         this.firingBullet();
 
