@@ -34,6 +34,7 @@ let numberOfBooks = 0;
 let heartsTarget = 3;
 let goldTarget = 3;
 let booksTarget = 3;
+let numberOfGhost = 0;
 
 let titleConfig = {
     fontFamily: 'menlo',

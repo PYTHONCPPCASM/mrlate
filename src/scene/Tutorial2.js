@@ -14,6 +14,8 @@ class Tutorial2 extends Phaser.Scene{
     }
 
     create(){
+        this.enemydirection = -1;
+        console.log('level 3')
         //this will determine the direction of the bullet
         this.fire = false;
         this.left = false;
@@ -35,25 +37,36 @@ class Tutorial2 extends Phaser.Scene{
         
         this.bgm2.play();
         this.createAnimation();
-        //bindKeys
+        
         this.bindKeys();
         this.addObject();
         this.addGameStats();
+        
+        //ghost timer
+        this.oscillate = setInterval(()=>{
+            this.enemydirection *= -1;
+            console.log(this.enemydirection);
+            this.ghost.flipX = true;
+        }, 2000);
 
     }
 
     update(){
-
         this.main.body.setGravityY(300);  //you can jump in such height
         if(this.ready == true){
-            this.controlMain();    
+            this.controlMain();
         }
+
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
+        this.ghost.x += 1 * this.enemydirection;
 
     }
 
+    enemyMoving(subject, x, boundX, boundX2){
+
+    }
     createAnimation(){
         console.log("create animation");
         this.anims.create({
@@ -89,7 +102,7 @@ class Tutorial2 extends Phaser.Scene{
         this.cursors = this.input.keyboard.createCursorKeys();
         this.back = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         FIRE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
- 
+
     }
 
     //colliding reusable/update
@@ -150,17 +163,18 @@ class Tutorial2 extends Phaser.Scene{
                 console.log('bullet destroy()');
             }
             this.physics.add.collider(this.bullet, this.books, this.hittingObject, null, this);
+            this.physics.add.collider(this.bullet, this.ghost, this.killGhost, null, this);
         }
 
     }
     //level design happens here
 
     addGameStats(){
-    numberOfHearts = 0;
-    initialTime = 30;
-    this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
+        initialTime = 30;
+        this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
+        this.level = this.add.text(1000, 700, 'level 2', titleConfig);
     //set style
-    this.text.setStyle(titleConfig);
+        this.text.setStyle(titleConfig);
     //for each second
     // this.timedEvent = this.time.addEvent({
     //     delay : 1000,
@@ -171,15 +185,19 @@ class Tutorial2 extends Phaser.Scene{
 
     //  //book stats
      this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
-     this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + booksTarget).setOrigin(0.5, 0.5);
+     this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + 6).setOrigin(0.5, 0.5);
      this.bookCollected.setStyle(scoreConfig);
 
+     this.add.image(670, 30, 'ghost').setOrigin(0.5, 0.5);
+     this.ghostKilled = this.add.text(750, 30, numberOfGhost + '/' + 1).setOrigin(0.5, 0.5);
+     this.ghostKilled.setStyle(scoreConfig);
+     
     }
 
     addObject(){
-
-        this.add.image(1194,834, 'wall').setOrigin(0.5, 0.5);
-
+        numberOfGhost = 0;
+        this.add.image(borderX / 2, borderY / 2, 'wall').setOrigin(0.5, 0.5);
+        this.add.image(borderX / 2, borderY / 2, 'window').setOrigin(0.5, 0.5);
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
         //this.groundPlatform = this.groundGroup.create(500, 788, 'longPlatform').refreshBody();
@@ -194,16 +212,14 @@ class Tutorial2 extends Phaser.Scene{
 
         //adding the main character
         this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(1.0);
-
+        this.ghost = this.physics.add.sprite(1000, 400, 'ghost');
         //add book for picking up
-        // 
-
+        //
         this.books = this.physics.add.group({
             key: 'book',
             repeat : 5,
             setXY : {x: 150, y: 600, stepX : 100, stepY : -100}
         });
-
         this.books.children.iterate((child)=>{
             child.refreshBody();
             child.setGravityY(300);
@@ -224,7 +240,7 @@ class Tutorial2 extends Phaser.Scene{
 
     collectBooks(player, book){
         numberOfBooks += 1;
-        this.bookCollected.setText(numberOfBooks + '/' + booksTarget);
+        this.bookCollected.setText(numberOfBooks + '/' + 6);
         book.disableBody(true, true);
         this.sound.play('ding');
     }
@@ -251,15 +267,16 @@ class Tutorial2 extends Phaser.Scene{
 
     checkGameOver(){
         if(this.main.y >= 800){
-            this.levelManagement();
+            this.levelManagement('bring you back in 3s');
         }
         if(initialTime < 0){
-            this.levelManagement();
+            this.levelManagement('bring you back in 3s');
         }
     }
 
     loadVisualAssets(){
-        this.load.image('girl', './assets/girl.png');
+
+        this.load.image('window', './assets/window2.png');
         this.load.image('bullet', './assets/bullet.png');
         this.load.image('late', './assets/kid.png');
         this.load.image('background', './assets/scene1.png');
@@ -272,6 +289,7 @@ class Tutorial2 extends Phaser.Scene{
         this.load.image('longPlatform', './assets/longPlatform.png');
         this.load.image('shortPlatform', './assets/shortPlatform.png');
         this.load.image('candy', './assets/candy.png');
+        this.load.image('ghost', './assets/ghost.png');
 
         this.load.spritesheet('kid', './assets/kid.png', {
             frameWidth:32,
@@ -282,9 +300,9 @@ class Tutorial2 extends Phaser.Scene{
         });
         //slicing the spritesheet
         this.load.spritesheet('goLeft', './assets/goLeft.png', {
-            frameWidth:32,
             frameHeight:60,
             startFrame:0,
+            frameWidth:32,
             endFrame:7,
             repeat: -1
         });
@@ -308,12 +326,8 @@ class Tutorial2 extends Phaser.Scene{
         this.load.audio('ding', './assets/ding.wav');
     }
 
-    playBGM(){
-        
-    }
-
     checkWin(){
-        if(numberOfBooks == 6){
+        if(numberOfBooks == 6 && numberOfGhost == 1){
             this.gold = this.physics.add.sprite(1000, 550, 'gold').setOrigin(0.5, 0.5);
             numberOfHearts = 0;
             numberOfGold = 0;
@@ -330,7 +344,7 @@ class Tutorial2 extends Phaser.Scene{
                                                             'and don\'t fall off the stair,\n' +
                                                             ' and I love you"',
                                                             titleConfig).setOrigin(0.5, 0.5);
-        this.time.delayedCall(3000, ()=>{
+        this.time.delayedCall(1000, ()=>{
             this.black.destroy();
             this.word.destroy();
             this.ready = true;
@@ -350,6 +364,14 @@ class Tutorial2 extends Phaser.Scene{
             this.scene.start();
         });
 
+    }
+
+    killGhost(bullet, ghost){
+        ghost.destroy();
+        bullet.destroy();
+        this.sound.play('ding');
+        numberOfGhost += 1;
+        this.ghostKilled.setText(numberOfGhost + '/' + 1);
     }
 
 }
