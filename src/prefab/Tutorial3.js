@@ -56,7 +56,7 @@ class Tutorial3 extends Phaser.Scene{
         if(this.ready == true){
             this.controlMain();
         }
-        
+
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
@@ -206,7 +206,7 @@ class Tutorial3 extends Phaser.Scene{
         //this.movingPlatform = this.groundGroup.create(700, 600, 'longPlatform').refreshBody();
 
         //adding the main character
-        this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(2.0);
+        this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(1.0);
         this.ghost = this.physics.add.sprite(1000, 400, 'ghost');
         //add book for picking up
         //

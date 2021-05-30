@@ -33,11 +33,12 @@ class Tutorial extends Phaser.Scene{
     update(){
 
         this.main.body.setGravityY(300);  //you can jump in such height
-        
+    
         if(this.ready == true){
             this.controlMain();
         }
-        this.ghost.x += 1 * this.enemydirection;
+
+        this.ghostMovement();
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
@@ -87,13 +88,14 @@ class Tutorial extends Phaser.Scene{
         this.physics.add.collider(this.main, this.gold, this.collectStar, null, this);
         //this.physics.add.overlap(this.main, this.books, this.collectBooks, null, this);
         this.physics.add.collider(this.main, this.hearts, this.collectHearts, null, this);
-        this.physics.add.overlap(this.main, this.ghost, this.hitGhost, null, this);
+        this.physics.add.collider(this.main, this.ghost, this.hitGhost, null, this);
+        this.physics.add.collider(this.main, this.ghost, this.hitGhost, null, this);
 
     }
 
     //control of the main character
     controlMain(){
-
+        //control movement
         if(this.cursors.left.isDown){
             this.main.setVelocityX(-320);
             this.main.anims.play('walkLeft', true);
@@ -114,7 +116,7 @@ class Tutorial extends Phaser.Scene{
             }
 
         }
-
+        //
         if(this.cursors.up.isDown && this.main.body.touching.down){
             this.main.setVelocityY(-320);
             this.sound.play('jump');
@@ -143,8 +145,9 @@ class Tutorial extends Phaser.Scene{
                 this.bullet.destroy();
                 console.log('bullet destroy()');
             }
-
+            //bullet can always kill ghost
             this.physics.add.collider(this.bullet, this.ghost, this.killGhost, null, this);
+            this.physics.add.collider(this.bullet, this.ghost2, this.killGhost, null, this);
 
         }
 
@@ -196,19 +199,25 @@ class Tutorial extends Phaser.Scene{
 
         //adding the main character
         
-        this.main = this.physics.add.sprite(50, 300, 'goLeft').setScale(2.0).setOrigin(0.8, 0.5);
+        this.main = this.physics.add.sprite(50, 300, 'goLeft').setScale(1.0).setOrigin(0.8, 0.5);
+        //this.ghost = this.physics.add.sprite(600, 180, 'ghost');
+       
+        this.ghostGroup = this.physics.add.staticGroup();
         this.ghost = this.physics.add.sprite(600, 180, 'ghost');
+        this.ghost2 = this.physics.add.sprite(300, 400, 'ghost');
+
         console.log(this.ghost.x);
+        //group of hearts
         this.hearts = this.physics.add.group({
             key : 'heart',
             repeat : 3,
             setXY : {x : 130, y : 0, stepX : 100, stepY : 0}
         });
-
         this.hearts.children.iterate(function (child) {
             child.refreshBody();
             child.setGravityY(300);
         });
+
 
         //set colliding enabled
         
@@ -224,7 +233,8 @@ class Tutorial extends Phaser.Scene{
             this.enemydirection *= -1;
             console.log(this.enemydirection);
             this.ghost.flipX = true;
-            console.log(this.ghost.x);
+            this.ghost2.flipX = true;
+            console.log(this.ghost.body.x);
         }, 3000);
 
     }
@@ -264,7 +274,7 @@ class Tutorial extends Phaser.Scene{
 
     checkGameOver(){
         if(this.main.y >= 800 || initialTime < 0){
-            this.levelManagement();
+            this.levelManagement(this.main);
         }
     }
 
@@ -361,19 +371,17 @@ class Tutorial extends Phaser.Scene{
     }
 
     hitGhost(subject, object){
-        if(subject){
-            subject.destroy();
-        }
         if(object){
             object.destroy();
         }
+        //use disableBody
+        this.main.disableBody();
         this.sound.play('ding');
         this.ready = false;
         this.bgm.stop();
         clearInterval(this.oscillate);
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
-        this.main.setVelocityX(0);
-        this.main.setVelocityY(0);
+        
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'you have kill by the death\n'
                                                                  + 'game restart in 3s',
                                                     titleConfig).setOrigin(0.5, 0.5);
@@ -396,15 +404,17 @@ class Tutorial extends Phaser.Scene{
         this.ready = false;
         this.bgm.stop();
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
-        this.main.setVelocityX(0);
-        this.main.setVelocityY(0);
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'game over\n'
                                                                  + 'game restart in 3s',
                                                     titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.scene.start();
         });
+    }
 
+    ghostMovement(){
+        this.ghost.x += 1 * this.enemydirection;
+        this.ghost2.x += 1 * this.enemydirection;
     }
 
 }
