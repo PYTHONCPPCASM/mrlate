@@ -14,7 +14,7 @@ class ghostFire extends Phaser.Physics.Arcade.Sprite{
     }
 
     reset(){
-        this.y = 0;
+        this.y = this.range(-500, 0);
         this.x = this.range(0, 1280);
     }
 

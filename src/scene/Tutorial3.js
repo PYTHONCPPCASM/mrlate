@@ -102,8 +102,9 @@ class Tutorial3 extends Phaser.Scene{
     collisionManagement(){
         this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
         //ghost kills
-        this.physics.add.collider(this.main, this.ghost, this.hitGhost, null, this);
-        this.physics.add.collider(this.main, this.ghost2, this.hitGhost, null, this);
+        this.physics.add.collider(this.main, this.ghost, this.killMain, null, this);
+        this.physics.add.collider(this.main, this.ghost2, this.killMain, null, this);
+        this.physics.add.collider(this.main, this.fireStorm, this.killMain, null, this);
     }
 
     //control of the main character
@@ -214,9 +215,13 @@ class Tutorial3 extends Phaser.Scene{
         //add ghost
         this.ghost = this.physics.add.sprite(300, 400, 'ghost');
         this.ghost2 = this.physics.add.sprite(200, 300, 'ghost');
-        //firing
-        
-        
+        //fire storm
+        this.fireStorm = this.add.group();
+
+        for(let i = 0; i < 5; i++){
+            this.fireStorm.add(new ghostFire(this, 0, 0, 'fire', 0), this);
+        }
+        this.fireStorm.runChildUpdate = true;
 
         this.books = this.physics.add.group({
             key: 'book',
@@ -232,7 +237,6 @@ class Tutorial3 extends Phaser.Scene{
         this.physics.add.collider(this.main, this.groundGroup);   //main walking on ground
         this.physics.add.collider(this.books, this.groundGroup);
         this.physics.add.collider(this.main, this.groundPlatform);
-        
 
         this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
@@ -245,10 +249,6 @@ class Tutorial3 extends Phaser.Scene{
         }, 3000);
 
         this.fire1 = new ghostFire(this, 200, 200, 'fire', 0, this.emitX);
-
-        this.firingBullet();
-
-        //how to use time event to make count down, from internet
         this.dialog();
     }
     //countDown event
@@ -408,28 +408,27 @@ class Tutorial3 extends Phaser.Scene{
         this.ghost2.x += 1 * this.enemydirection;
     }
 
-    firingBullet(){
-
-    }   
-
-    hitGhost(subject, object){
+    killMain(subject, object){
         if(object){
             object.destroy();
         }
         //use disableBody
-        this.main.disableBody();
-        this.sound.play('ding');
-        this.ready = false;
-        this.bgm2.stop();
-        clearInterval(this.oscillate);
+        subject.disableBody();
+        this.clear();
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
-        
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, 'you have kill by the death\n'
                                                                  + 'game restart in 3s',
                                                     titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.scene.start();
         });
+    }
+
+    clear(){
+        this.sound.play('ding');
+        this.ready = false;
+        this.bgm2.stop();
+        clearInterval(this.oscillate);
     }
 
 }
