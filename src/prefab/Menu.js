@@ -18,7 +18,7 @@ class Menu extends Phaser.Scene{
         this.credit = this.add.image(borderX / 2, borderY / 2 + 100, 'credit').setScale(3).setInteractive().setOrigin(0.5, 0.5);
         
         this.main.once('pointerup', ()=> {
-            this.scene.start('playScene3');
+            this.scene.start('preScene');
         }, this);
 
         this.creditText;

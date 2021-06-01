@@ -6,11 +6,11 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: false,
+            debug: true,
             gravity: { x : 0, y: 0 }
         }
     },
-    scene: [ Menu, System, Tutorial, Tutorial2, Tutorial3, Home, GameOver, Turning, Dialog ]
+    scene: [ Menu, System, Tutorial, Tutorial2, Tutorial3, level1, Home, GameOver, Turning, Dialog, prescene]
 };
 
 let game = new Phaser.Game(config);
@@ -35,6 +35,7 @@ let heartsTarget = 3;
 let goldTarget = 3;
 let booksTarget = 3;
 let numberOfGhost = 0;
+let numberOfClocks = 0;
 
 let titleConfig = {
     fontFamily: 'menlo',

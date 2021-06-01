@@ -1,7 +1,7 @@
-class Tutorial3 extends Phaser.Scene{
+class level1 extends Phaser.Scene{
 
     constructor(){
-        super('playScene3');
+        super('playScene4');
     }
 
     preload(){
@@ -15,8 +15,7 @@ class Tutorial3 extends Phaser.Scene{
 
     create(){
         //this will determine the direction of the bullet
-        this.timer = 0;
-        numberOfBooks = 0;
+        numberOfClocks = 0;
         this.fire = false;
         this.left = false;
         this.right = true;
@@ -55,7 +54,6 @@ class Tutorial3 extends Phaser.Scene{
         this.checkGameOver();
         this.collisionManagement();
         this.checkWin();
-        this.fire1.update();
 
     }
 
@@ -100,11 +98,12 @@ class Tutorial3 extends Phaser.Scene{
 
     //colliding reusable/update
     collisionManagement(){
-        this.physics.add.collider(this.main, this.books, this.collectBooks, null, this);
+        this.physics.add.collider(this.main, this.clocks, this.collectClocks, null, this);
         //ghost kills
         this.physics.add.collider(this.main, this.ghost, this.killMain, null, this);
         this.physics.add.collider(this.main, this.ghost2, this.killMain, null, this);
         this.physics.add.collider(this.main, this.fireStorm, this.killMain, null, this);
+        this.physics.add.collider(this.fireStorm, this.groundGroup, this.killFire, null, this);
     }
 
     //control of the main character
@@ -168,24 +167,24 @@ class Tutorial3 extends Phaser.Scene{
     //level design happens here
 
     addGameStats(){
-    this.level = this.add.text(1000, 700, 'level 3', titleConfig);
+    this.level = this.add.text(1000, 700, 'level 4', titleConfig);
     initialTime = 30;
-    //this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
+    this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
     //set style
-    //this.text.setStyle(titleConfig);
+    this.text.setStyle(titleConfig);
     //for each second
-    // this.timedEvent = this.time.addEvent({
-    //     delay : 1000,
-    //     callback : this.onEvent,
-    //     callbackScope : this,
-    //     loop : true
-    // });
+    this.timedEvent = this.time.addEvent({
+        delay : 1000,
+        callback : this.count,
+        callbackScope : this,
+        loop : true
+    });
 
-     //book stats
-     this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
+    //clock stats
+     this.add.image(830, 30, 'clock').setOrigin(0.5, 0.5);
      
-     this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + 6).setOrigin(0.5, 0.5);
-     this.bookCollected.setStyle(scoreConfig);
+     this.clockCollected = this.add.text(910, 30, numberOfClocks + '/' + 6).setOrigin(0.5, 0.5);
+     this.clockCollected.setStyle(scoreConfig);
 
      this.add.image(670, 30, 'ghost').setOrigin(0.5, 0.5);
      this.ghostKilled = this.add.text(750, 30, numberOfGhost + '/' + 2).setOrigin(0.5, 0.5);
@@ -201,11 +200,10 @@ class Tutorial3 extends Phaser.Scene{
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
         this.groundGroup.create(150, 700, 'longPlatform');
-        this.groundGroup.create(250, 600, 'shortPlatform');
-        this.groundGroup.create(350, 500, 'shortPlatform').refreshBody();
+        this.groundGroup.create(400, 600, 'shortPlatform');
+        this.groundGroup.create(200, 500, 'shortPlatform').refreshBody();
         this.groundGroup.create(500, 400, 'shortPlatform').refreshBody();
-        this.groundGroup.create(850, 300, 'shortPlatform').refreshBody();
-        this.groundGroup.create(700, 200, 'shortPlatform').refreshBody();
+        this.groundGroup.create(700, 300, 'shortPlatform').refreshBody();
         this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
         
 
@@ -213,29 +211,29 @@ class Tutorial3 extends Phaser.Scene{
         this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(1.0);
 
         //add ghost
-        this.ghost = this.physics.add.sprite(300, 400, 'ghost');
-        this.ghost2 = this.physics.add.sprite(200, 300, 'ghost');
+        this.ghost = this.physics.add.sprite(600, 340, 'ghost');
+        this.ghost2 = this.physics.add.sprite(800, 240, 'ghost');
 
-        this.books = this.physics.add.group({
-            key: 'book',
+        this.clocks = this.physics.add.group({
+            key: 'clock',
             repeat : 5,
             setXY : {x: 150, y: 600, stepX : 100, stepY : -100}
         });
 
-        this.books.children.iterate((child)=>{
+        this.clocks.children.iterate((child)=>{
             child.refreshBody();
             child.setGravityY(300);
         });
         
         //firestorm
         this.fireStorm = this.add.group();
-        for(let i = 0; i < 5; i++){
+        for(let i = 0; i < 10; i++){
             this.fireStorm.add(new ghostFire(this, 0, 0, 'fire', 0), this);
         }
         this.fireStorm.runChildUpdate = true;
 
         this.physics.add.collider(this.main, this.groundGroup);   //main walking on ground
-        this.physics.add.collider(this.books, this.groundGroup);
+        this.physics.add.collider(this.clocks, this.groundGroup);
         this.physics.add.collider(this.main, this.groundPlatform);
 
         this.oscillate = setInterval(()=>{
@@ -248,19 +246,19 @@ class Tutorial3 extends Phaser.Scene{
             
         }, 3000);
 
-        this.fire1 = new ghostFire(this, 200, 200, 'fire', 0, this.emitX);
         this.dialog();
     }
     //countDown event
-    onEvent(){
+    count(){
         initialTime -= 1;
         this.text.setText('Countdown : ' + initialTime, titleConfig);
     }
 
-    collectBooks(player, book){
-        numberOfBooks += 1;
-        this.bookCollected.setText(numberOfBooks + '/' + 6);
-        book.disableBody(true, true);
+    collectClocks(player, clock){
+        initialTime += 5;
+        numberOfClocks += 1;
+        this.clockCollected.setText(numberOfClocks + '/' + 6);
+        clock.disableBody(true, true);
         this.sound.play('ding');
     }
 
@@ -281,7 +279,7 @@ class Tutorial3 extends Phaser.Scene{
         this.add.text(640, 400, 'you have cleared the stage,'
                                +'\nsending you to the next stage...',
                                  titleConfig).setOrigin();
-        this.time.delayedCall(1400, ()=>{this.scene.start('playScene4');});
+        this.time.delayedCall(1400, ()=>{this.scene.start('homeScene');});
     }
 
     checkGameOver(){
@@ -295,6 +293,7 @@ class Tutorial3 extends Phaser.Scene{
 
     loadVisualAssets(){
 
+        this.load.image('clock', './assets/clock.png');
         this.load.image('background', './assets/scene1.png');
         this.load.image('bullet', './assets/bullet.png');
         this.load.image('book', './assets/book.png');
@@ -354,11 +353,11 @@ class Tutorial3 extends Phaser.Scene{
     //when collect enough books, the gold will show
 
     checkWin(){
-        if(numberOfBooks == 6 && numberOfGhost == 2){
+        if(numberOfClocks == 6 && numberOfGhost == 2){
             this.gold = this.physics.add.sprite(1000, 550, 'gold').setOrigin(0.5, 0.5);
             numberOfHearts = 0;
             numberOfGold = 0;
-            numberOfBooks = 0;
+            numberOfClocks = 0;
             this.physics.add.collider(this.main, this.gold, this.warp, null, this);
             return;
         }
@@ -367,10 +366,7 @@ class Tutorial3 extends Phaser.Scene{
     dialog(){
 
         this.black = this.add.rectangle(0, 0, 2560, 1600, '#000000').setOrigin(0.5, 0.5);
-        this.word = this.add.text(borderX / 2, borderY / 2, 'mom says : "education makes you wealthier\n' +
-                                                            'and don\'t fall off the stair,\n' +
-                                                            'don\'t play with the fire' + 
-                                                            ' and I love you"',
+        this.word = this.add.text(borderX / 2, borderY / 2, 'time is of the essence', 
                                                             titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.black.destroy();
@@ -387,7 +383,7 @@ class Tutorial3 extends Phaser.Scene{
         
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, message, titleConfig).setOrigin(0.5, 0.5);
-        this.add.text(borderX / 2, borderY / 2, 'you fall of the stair', titleConfig).setOrigin(0.5, 0.5);
+        this.add.text(borderX, borderY, 'you fall of the stair', titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.scene.start();
         });
@@ -423,11 +419,17 @@ class Tutorial3 extends Phaser.Scene{
         });
     }
 
+    killFire(fire, ground){
+        fire.reset();
+    }
+
     clear(){
         this.sound.play('ding');
         this.ready = false;
         this.bgm2.stop();
         clearInterval(this.oscillate);
     }
+
+
 
 }
