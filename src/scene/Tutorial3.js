@@ -168,6 +168,10 @@ class Tutorial3 extends Phaser.Scene{
     //level design happens here
 
     addGameStats(){
+
+    this.add.text(100, 720, 'use arrow keys to control characters');
+    this.add.text(100, 750, 'press \'space\' key to shoot scissor to kill ghost');
+
     this.level = this.add.text(1000, 700, 'level 3', titleConfig);
     initialTime = 30;
     //this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
@@ -271,6 +275,7 @@ class Tutorial3 extends Phaser.Scene{
     }
    
     warp(player, gold){
+        clearInterval(this.oscillate);
         this.ready = false;
         player.setVelocityX(0);
         player.setVelocityY(0);
@@ -381,10 +386,12 @@ class Tutorial3 extends Phaser.Scene{
     }
 
     levelManagement(message){
-
+        clearInterval(this.oscillate);
+        this.add.text(100, 700, 'use arrow keys to control characters');
+        this.add.text(100, 750, 'press space key to shoot scissor to kill ghost');
+    
         this.ready = false;
         this.bgm2.stop();
-        
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, message, titleConfig).setOrigin(0.5, 0.5);
         this.add.text(borderX / 2, borderY / 2, 'you fall of the stair', titleConfig).setOrigin(0.5, 0.5);

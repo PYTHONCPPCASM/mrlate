@@ -155,6 +155,10 @@ class Tutorial extends Phaser.Scene{
     //level design happens here
 
     addGameStats(){
+
+    this.add.text(100, 720, 'use arrow keys to control characters');
+    this.add.text(100, 750, 'press \'space\' key to shoot scissor to kill ghost');
+
     this.level = this.add.text(1000, 700, 'level 1', titleConfig);
     numberOfHearts = 0;
     //countDown
@@ -258,6 +262,7 @@ class Tutorial extends Phaser.Scene{
     }
 
     warp(player, candy){
+        clearInterval(this.oscillate);
         player.setVelocityX(0);
         player.setVelocityY(0);
         candy.disableBody();

@@ -61,3 +61,17 @@ let scoreConfig = {
 },
     fixedWidth: 100
 };
+
+
+let hintConfig = {
+    fontFamily: 'menlo',
+    fontSize:'30px',
+    backgroundColor : '#000000',
+    color: '#FFFFFF',
+    align: 'left',
+    padding:{
+    top: 0,
+    bottom: 0,
+    left: 0
+ },
+};

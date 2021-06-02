@@ -15,19 +15,24 @@ class prescene extends Phaser.Scene{
     }
 
     create(){
+        console.log('prescene');
+        this.i = 0;
+        this.list = ['1', '2', '3', '4', '5', '6', '7'];
+        this.SPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.add.image(borderX / 2, borderY / 2, this.list[this.i]).setScale(0.5);
+        this.add.text(100, 720, "press space to continue", hintConfig);
+    }
 
-        var list = ['1', '2', '3', '4', '5', '6', '7'];
-        let i = 0;
-        this.add.image(borderX / 2, borderY / 2, list[i]).setScale(0.5);
-        setInterval(()=>{
-            i++;
-            this.add.image(borderX / 2, borderY / 2, list[i]).setScale(0.5);
-            if(i == 6){
-                console.log('clear');
+    update(){
+        if(Phaser.Input.Keyboard.JustDown(this.SPACE)){
+            console.log('press space');
+            this.i++;
+            this.add.image(borderX / 2, borderY / 2, this.list[this.i]).setScale(0.5);
+            this.add.text(100, 720, "press space to continue", hintConfig);
+            if(this.i == 7){
                 this.scene.start('playScene');
             }
-        }, 3000);
-
+        }
     }
 
 }
