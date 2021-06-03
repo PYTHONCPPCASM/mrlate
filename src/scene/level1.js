@@ -49,7 +49,8 @@ class level1 extends Phaser.Scene{
         if(this.ready == true){
             this.controlMain();
         }
-        
+        this.movingPlatform.body.x += 2 * this.enemydirection;
+        this.movingPlatform.x += 2 * this.enemydirection;
         this.ghostMovement();
         this.checkGameOver();
         this.collisionManagement();
@@ -104,6 +105,7 @@ class level1 extends Phaser.Scene{
         this.physics.add.collider(this.main, this.ghost2, this.killMain, null, this);
         this.physics.add.collider(this.main, this.fireStorm, this.killMain, null, this);
         this.physics.add.collider(this.fireStorm, this.groundGroup, this.killFire, null, this);
+        
     }
 
     //control of the main character
@@ -205,7 +207,7 @@ class level1 extends Phaser.Scene{
         this.groundGroup = this.physics.add.staticGroup();
         this.groundGroup.create(150, 700, 'longPlatform');
         this.groundGroup.create(400, 600, 'shortPlatform');
-        this.groundGroup.create(200, 500, 'shortPlatform').refreshBody();
+        this.movingPlatform = this.groundGroup.create(300, 500, 'shortPlatform');
         this.groundGroup.create(500, 400, 'shortPlatform').refreshBody();
         this.groundGroup.create(700, 300, 'shortPlatform').refreshBody();
         this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
@@ -239,10 +241,10 @@ class level1 extends Phaser.Scene{
         this.physics.add.collider(this.main, this.groundGroup);   //main walking on ground
         this.physics.add.collider(this.clocks, this.groundGroup);
         this.physics.add.collider(this.main, this.groundPlatform);
+        this.physics.add.collider(this.main, this.movingPlatform, this.go, null, this);
 
         this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
-            console.log(this.enemydirection);
             this.ghost.flipX = true;
             this.ghost2.flipX = true;
         }, 3000);
@@ -385,7 +387,7 @@ class level1 extends Phaser.Scene{
         clearInterval(this.oscillate);
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
         this.gameRestart = this.add.text(borderX / 2, borderY / 2, message, titleConfig).setOrigin(0.5, 0.5);
-        this.add.text(borderX, borderY, 'you fall of the stair', titleConfig).setOrigin(0.5, 0.5);
+        this.add.text(borderX, borderY, 'game over', titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.scene.start();
         });
@@ -432,6 +434,10 @@ class level1 extends Phaser.Scene{
         clearInterval(this.oscillate);
     }
 
+    go(main, platform){
+        main.body.x = platform.body.x;
+        main.x = platform.x;
+    }
 
 
 }

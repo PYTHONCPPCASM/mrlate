@@ -156,11 +156,11 @@ class Tutorial extends Phaser.Scene{
 
     addGameStats(){
 
-    this.add.text(100, 720, 'use arrow keys to control characters');
-    this.add.text(100, 750, 'press \'space\' key to shoot scissor to kill ghost');
-
-    this.level = this.add.text(1000, 700, 'level 1', titleConfig);
-    numberOfHearts = 0;
+        this.add.text(100, 750, 'press \'space\' key to shoot scissor to kill ghost');
+        this.add.text(100, 720, 'use arrow keys to control characters');
+        
+        this.level = this.add.text(1000, 700, 'level 1', titleConfig);
+        numberOfHearts = 0;
     //countDown
     initialTime = 30;
     this.countDown();
@@ -241,7 +241,6 @@ class Tutorial extends Phaser.Scene{
             console.log(this.enemydirection);
             this.ghost.flipX = true;
             this.ghost2.flipX = true;
-            console.log(this.ghost.body.x);
         }, 3000);
 
     }

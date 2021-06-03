@@ -344,10 +344,8 @@ class Tutorial2 extends Phaser.Scene{
 
     dialog(){
         this.black = this.add.rectangle(0, 0, 2560, 1600, '#000000').setOrigin(0.5, 0.5);
-        this.word = this.add.text(borderX / 2, borderY / 2, 'mom says : "education makes you wealthier\n' +
-                                                            '"enough" isn\'t enough\n' + 
-                                                            'and don\'t fall off the stair,\n' +
-                                                            ' and I love you"',
+        this.word = this.add.text(borderX / 2, borderY / 2, 'kill the ghost' + 
+                                                            'and don\'t fall off the stair,\n',
                                                             titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(1000, ()=>{
             this.black.destroy();

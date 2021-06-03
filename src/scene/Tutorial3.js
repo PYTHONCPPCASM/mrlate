@@ -208,6 +208,7 @@ class Tutorial3 extends Phaser.Scene{
         this.groundGroup.create(250, 600, 'shortPlatform');
         this.groundGroup.create(350, 500, 'shortPlatform').refreshBody();
         this.groundGroup.create(500, 400, 'shortPlatform').refreshBody();
+        this.groundGroup.create(700, 500, 'shortPlatform').refreshBody();
         this.groundGroup.create(850, 300, 'shortPlatform').refreshBody();
         this.groundGroup.create(700, 200, 'shortPlatform').refreshBody();
         this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
@@ -244,7 +245,6 @@ class Tutorial3 extends Phaser.Scene{
 
         this.oscillate = setInterval(()=>{
             this.enemydirection *= -1;
-            console.log(this.enemydirection);
             this.ghost.flipX = true;
             this.ghost2.flipX = true;
             this.emitX = this.ghost.x;
@@ -372,10 +372,7 @@ class Tutorial3 extends Phaser.Scene{
     dialog(){
 
         this.black = this.add.rectangle(0, 0, 2560, 1600, '#000000').setOrigin(0.5, 0.5);
-        this.word = this.add.text(borderX / 2, borderY / 2, 'mom says : "education makes you wealthier\n' +
-                                                            'and don\'t fall off the stair,\n' +
-                                                            'don\'t play with the fire' + 
-                                                            ' and I love you"',
+        this.word = this.add.text(borderX / 2, borderY / 2, 'don\'t play with the fire',
                                                             titleConfig).setOrigin(0.5, 0.5);
         this.time.delayedCall(3000, ()=>{
             this.black.destroy();
