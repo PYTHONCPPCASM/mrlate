@@ -21,7 +21,7 @@ class Tutorial2 extends Phaser.Scene{
         this.left = false;
         this.right = true;
         this.ready = false;
-        //this.playBGM();
+
         console.log('bgm 2');
         console.log('lolol');
         let loopConfig = {
@@ -178,16 +178,8 @@ class Tutorial2 extends Phaser.Scene{
         this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
         this.level = this.add.text(1000, 700, 'level 2', titleConfig);
     //set style
-        this.text.setStyle(titleConfig);
-    //for each second
-    // this.timedEvent = this.time.addEvent({
-    //     delay : 1000,
-    //     callback : this.onEvent,
-    //     callbackScope : this,
-    //     loop : true
-    // });
 
-    //  //book stats
+     this.text.setStyle(titleConfig);
      this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
      this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + 6).setOrigin(0.5, 0.5);
      this.bookCollected.setStyle(scoreConfig);
@@ -204,7 +196,6 @@ class Tutorial2 extends Phaser.Scene{
         this.add.image(borderX / 2, borderY / 2, 'window').setOrigin(0.5, 0.5);
         //adding the platform group
         this.groundGroup = this.physics.add.staticGroup();
-        //this.groundPlatform = this.groundGroup.create(500, 788, 'longPlatform').refreshBody();
         this.groundGroup.create(150, 700, 'longPlatform');
         this.groundGroup.create(250, 600, 'shortPlatform');
         this.groundGroup.create(350, 500, 'shortPlatform').refreshBody();
@@ -212,7 +203,6 @@ class Tutorial2 extends Phaser.Scene{
         this.groundGroup.create(550, 300, 'shortPlatform').refreshBody();
         this.groundGroup.create(650, 200, 'shortPlatform').refreshBody();
         this.groundGroup.create(1000, 600, 'shortPlatform').refreshBody();
-        //this.movingPlatform = this.groundGroup.create(700, 600, 'longPlatform').refreshBody();
 
         //adding the main character
         this.main = this.physics.add.sprite(40, 600, 'goLeft').setScale(1.0);

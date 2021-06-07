@@ -306,9 +306,7 @@ class Tutorial extends Phaser.Scene{
         this.load.image('longPlatform', './assets/longPlatform.png');
         this.load.image('shortPlatform', './assets/shortPlatform.png');
         this.load.image('candy', './assets/candy.png');
-        // this.load.image('goLeft', './assets/goLeft.png');
-        // this.load.image('goRight', './assets/goRight.png');
-
+    
         this.load.spritesheet('kid', './assets/kid.png', {
             frameWidth:32,
             frameHeight:64,
@@ -316,6 +314,7 @@ class Tutorial extends Phaser.Scene{
             endFrame:2,
             repeat: -1
         });
+
         //slicing the spritesheet
         this.load.spritesheet('goLeft', './assets/goLeft.png', {
             frameWidth:32,

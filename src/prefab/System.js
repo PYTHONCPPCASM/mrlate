@@ -26,7 +26,6 @@ class System extends Phaser.Scene{
         this.keyPlay = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyHome = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
 
-        // this.add.text(100, 100, 'Wait for 2s and the scene will change', titleConfig);
         this.add.text(100, 200, 'Press A to go to playScene', titleConfig);
         this.add.text(100, 300, 'Press B to go to homeScene', titleConfig);
 

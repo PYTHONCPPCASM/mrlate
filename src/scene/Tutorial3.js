@@ -21,7 +21,6 @@ class Tutorial3 extends Phaser.Scene{
         this.left = false;
         this.right = true;
         this.ready = false;
-        //this.playBGM();
         console.log('bgm 2');
         console.log('lolol');
         let loopConfig = {
@@ -174,18 +173,7 @@ class Tutorial3 extends Phaser.Scene{
 
     this.level = this.add.text(1000, 700, 'level 3', titleConfig);
     initialTime = 30;
-    //this.text = this.add.text(32, 32, 'Countdown : ' + 'INF');
-    //set style
-    //this.text.setStyle(titleConfig);
-    //for each second
-    // this.timedEvent = this.time.addEvent({
-    //     delay : 1000,
-    //     callback : this.onEvent,
-    //     callbackScope : this,
-    //     loop : true
-    // });
 
-     //book stats
      this.add.image(830, 30, 'book').setOrigin(0.5, 0.5);
      
      this.bookCollected = this.add.text(910, 30, numberOfBooks + '/' + 6).setOrigin(0.5, 0.5);
@@ -415,7 +403,9 @@ class Tutorial3 extends Phaser.Scene{
         if(object){
             object.destroy();
         }
+
         //use disableBody
+        
         subject.disableBody();
         this.clear();
         this.add.rectangle(borderX / 2, borderY / 2, borderX, borderY, '#FFFFFF').setOrigin(0.5, 0.5);
